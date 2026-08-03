@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Dashboard</h1>
+
+<p style="font-size:20px; margin-bottom:30px;">
+    Welcome back,
+    <strong>{{ request.user.username }}</strong> 👋
+    <p><strong>Role:</strong> {{ user_group }}</p>
+</p>
+
+<div class="cards">
+
+    <div class="card students">
+        <div class="icon">👨‍🎓</div>
+        <h3>Students</h3>
+        <h1>{{ student_count }}</h1>
+    </div>
+
+    <div class="card teachers">
+        <div class="icon">👩‍🏫</div>
+        <h3>Teachers</h3>
+       <h1>{{ teacher_count }}</h1>
+    </div>
+
+    <div class="card classes">
+        <div class="icon">🏫</div>
+        <h3>Classes</h3>
+        <h1>0</h1>
+    </div>
+
+    <div class="card subjects">
+        <div class="icon">📚</div>
+        <h3>Subjects</h3>
+        <h1>0</h1>
+    </div>
+
+</div>
+
+{% endblock %}  
