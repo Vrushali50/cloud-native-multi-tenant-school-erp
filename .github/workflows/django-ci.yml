@@ -1,13 +1,6 @@
 name: Django ERP CI Pipeline
 
-on:
-  push:
-    branches:
-      - main
-
-  pull_request:
-    branches:
-      - main
+on: [push, pull_request]
 
 jobs:
   django-check:
