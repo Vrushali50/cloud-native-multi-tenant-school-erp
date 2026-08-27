@@ -1,0 +1,219 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+    .form-page {
+        padding: 25px;
+        background: #f5f7fb;
+        min-height: 100vh;
+    }
+
+    .form-card {
+        max-width: 780px;
+        margin: auto;
+        background: white;
+        border-radius: 14px;
+        box-shadow: 0 8px 22px rgba(15, 23, 42, 0.08);
+        border: 1px solid #e4e7ec;
+        overflow: hidden;
+    }
+
+    .form-header {
+        background: #0f3b66;
+        color: white;
+        padding: 22px 26px;
+    }
+
+    .form-header h2 {
+        margin: 0;
+        font-size: 25px;
+        font-weight: 800;
+    }
+
+    .form-header p {
+        margin: 6px 0 0 0;
+        font-size: 14px;
+        opacity: 0.9;
+    }
+
+    .form-body {
+        padding: 26px;
+    }
+
+    .info-box {
+        background: #f0f7ff;
+        border-left: 4px solid #0f3b66;
+        padding: 14px 16px;
+        border-radius: 8px;
+        color: #344054;
+        margin-bottom: 22px;
+        font-size: 14px;
+        line-height: 1.6;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        display: block;
+        font-weight: 800;
+        color: #344054;
+        margin-bottom: 7px;
+    }
+
+    .form-group select,
+    .form-group input {
+        width: 100%;
+        padding: 11px 12px;
+        border: 1px solid #d0d5dd;
+        border-radius: 8px;
+        outline: none;
+    }
+
+    .form-group select:focus,
+    .form-group input:focus {
+        border-color: #0f3b66;
+        box-shadow: 0 0 0 3px rgba(15, 59, 102, 0.12);
+    }
+
+    .help-text {
+        margin-top: 6px;
+        color: #667085;
+        font-size: 13px;
+    }
+
+    .error-text {
+        color: #b42318;
+        font-size: 13px;
+        margin-top: 5px;
+    }
+
+    .form-errors {
+        background: #fee2e2;
+        color: #991b1b;
+        padding: 12px 14px;
+        border-radius: 8px;
+        margin-bottom: 18px;
+    }
+
+    .warning-box {
+        background: #fffbeb;
+        border-left: 4px solid #f59e0b;
+        padding: 14px 16px;
+        border-radius: 8px;
+        color: #92400e;
+        margin-top: 18px;
+        font-size: 14px;
+    }
+
+    .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+        margin-top: 28px;
+        flex-wrap: wrap;
+    }
+
+    .btn-save {
+        border: none;
+        background: #0f3b66;
+        color: white;
+        padding: 11px 22px;
+        border-radius: 8px;
+        font-weight: 800;
+        cursor: pointer;
+    }
+
+    .btn-save:hover {
+        background: #0b2f52;
+    }
+
+    .btn-cancel {
+        background: white;
+        color: #344054;
+        border: 1px solid #d0d5dd;
+        padding: 11px 18px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 700;
+    }
+</style>
+
+<div class="form-page">
+
+    <div class="form-card">
+
+        <div class="form-header">
+            <h2>{{ title }}</h2>
+            <p>Assign one fee structure to multiple students at once.</p>
+        </div>
+
+        <div class="form-body">
+
+            <div class="info-box">
+                Select a fee structure and the system will automatically assign it to all active students
+                in that class. If you select a section, only students from that section will receive the fee.
+            </div>
+
+            {% if form.non_field_errors %}
+                <div class="form-errors">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+
+            <form method="post">
+                {% csrf_token %}
+
+                {% for field in form %}
+
+                    <div class="form-group">
+
+                        <label for="{{ field.id_for_label }}">
+                            {{ field.label }}
+                        </label>
+
+                        {{ field }}
+
+                        {% if field.help_text %}
+                            <div class="help-text">
+                                {{ field.help_text }}
+                            </div>
+                        {% endif %}
+
+                        {% for error in field.errors %}
+                            <div class="error-text">
+                                {{ error }}
+                            </div>
+                        {% endfor %}
+
+                    </div>
+
+                {% endfor %}
+
+                <div class="warning-box">
+                    Existing assignments will not be duplicated. The system will skip students who already have this fee.
+                </div>
+
+                <div class="form-actions">
+
+                    <a href="{% url 'core:student_fees' %}" class="btn-cancel">
+                        Cancel
+                    </a>
+
+                    <button type="submit" class="btn-save">
+                        Bulk Assign Fee
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

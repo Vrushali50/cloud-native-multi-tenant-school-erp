@@ -1,0 +1,176 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+    .page-wrap {
+        padding: 25px;
+        background: #f5f7fb;
+        min-height: 100vh;
+    }
+
+    .page-header {
+        margin-bottom: 22px;
+    }
+
+    .page-header h2 {
+        margin: 0;
+        color: #102a43;
+        font-weight: 800;
+    }
+
+    .page-header p {
+        margin: 6px 0 0 0;
+        color: #667085;
+        font-size: 14px;
+    }
+
+    .card-box {
+        background: white;
+        border-radius: 14px;
+        box-shadow: 0 8px 22px rgba(15, 23, 42, 0.08);
+        border: 1px solid #e4e7ec;
+        overflow: hidden;
+    }
+
+    .table-wrap {
+        overflow-x: auto;
+    }
+
+    .erp-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .erp-table th {
+        background: #f2f6fb;
+        color: #344054;
+        text-align: left;
+        padding: 14px;
+        font-size: 14px;
+        border-bottom: 1px solid #e4e7ec;
+    }
+
+    .erp-table td {
+        padding: 14px;
+        border-bottom: 1px solid #eef2f6;
+        color: #101828;
+        font-size: 14px;
+        vertical-align: top;
+    }
+
+    .badge-borrowed {
+        background: #fef3c7;
+        color: #92400e;
+        padding: 5px 10px;
+        border-radius: 999px;
+        font-weight: 700;
+        font-size: 12px;
+    }
+
+    .badge-returned {
+        background: #dcfce7;
+        color: #166534;
+        padding: 5px 10px;
+        border-radius: 999px;
+        font-weight: 700;
+        font-size: 12px;
+    }
+
+    .badge-lost {
+        background: #fee2e2;
+        color: #991b1b;
+        padding: 5px 10px;
+        border-radius: 999px;
+        font-weight: 700;
+        font-size: 12px;
+    }
+
+    .empty-row {
+        text-align: center;
+        padding: 30px;
+        color: #667085;
+    }
+</style>
+
+<div class="page-wrap">
+
+    <div class="page-header">
+        <h2>My Library Records</h2>
+        <p>Library issue and return history for {{ member_name }}.</p>
+    </div>
+
+    <div class="card-box">
+
+        <div class="table-wrap">
+
+            <table class="erp-table">
+
+                <thead>
+                    <tr>
+                        <th>Book</th>
+                        <th>Issue Date</th>
+                        <th>Due Date</th>
+                        <th>Return Date</th>
+                        <th>Fine</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for issue in issues %}
+
+                        <tr>
+                            <td>
+                                <strong>{{ issue.book.title }}</strong>
+                                <br>
+                                <small>{{ issue.book.author }}</small>
+                            </td>
+
+                            <td>{{ issue.issue_date|date:"d M Y" }}</td>
+
+                            <td>{{ issue.due_date|date:"d M Y" }}</td>
+
+                            <td>
+                                {% if issue.return_date %}
+                                    {{ issue.return_date|date:"d M Y" }}
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+
+                            <td>£{{ issue.fine_amount }}</td>
+
+                            <td>
+                                {% if issue.status == "Borrowed" %}
+                                    <span class="badge-borrowed">Borrowed</span>
+                                {% elif issue.status == "Returned" %}
+                                    <span class="badge-returned">Returned</span>
+                                {% else %}
+                                    <span class="badge-lost">Lost</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+
+                    {% empty %}
+
+                        <tr>
+                            <td colspan="6" class="empty-row">
+                                No library records found.
+                            </td>
+                        </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

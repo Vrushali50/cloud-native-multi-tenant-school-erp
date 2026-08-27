@@ -1,0 +1,308 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+    .page-wrap {
+        padding: 25px;
+        background: #f5f7fb;
+        min-height: 100vh;
+    }
+
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+        flex-wrap: wrap;
+        margin-bottom: 22px;
+    }
+
+    .page-title h2 {
+        margin: 0;
+        color: #102a43;
+        font-weight: 800;
+        font-size: 28px;
+    }
+
+    .page-title p {
+        margin: 6px 0 0 0;
+        color: #667085;
+    }
+
+    .header-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .btn-main {
+        background: #0f3b66;
+        color: white;
+        padding: 11px 18px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 800;
+        display: inline-block;
+    }
+
+    .btn-secondary {
+        background: #475467;
+        color: white;
+        padding: 11px 18px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 800;
+        display: inline-block;
+    }
+
+    .summary-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 18px;
+        margin-bottom: 22px;
+    }
+
+    .summary-card {
+        background: white;
+        padding: 22px;
+        border-radius: 14px;
+        border: 1px solid #e4e7ec;
+        box-shadow: 0 8px 22px rgba(15, 23, 42, 0.08);
+    }
+
+    .summary-card h4 {
+        margin: 0 0 10px 0;
+        color: #667085;
+        font-size: 14px;
+    }
+
+    .summary-card h1 {
+        margin: 0;
+        color: #0f3b66;
+        font-size: 34px;
+        font-weight: 800;
+    }
+
+    .card-box {
+        background: white;
+        border-radius: 14px;
+        border: 1px solid #e4e7ec;
+        box-shadow: 0 8px 22px rgba(15, 23, 42, 0.08);
+        overflow: hidden;
+    }
+
+    .search-box {
+        padding: 18px;
+        border-bottom: 1px solid #e4e7ec;
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .search-box input {
+        flex: 1;
+        min-width: 250px;
+        padding: 11px 12px;
+        border: 1px solid #d0d5dd;
+        border-radius: 8px;
+    }
+
+    .search-box button {
+        padding: 11px 18px;
+        border: none;
+        background: #0f3b66;
+        color: white;
+        border-radius: 8px;
+        font-weight: 800;
+    }
+
+    .erp-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .erp-table th {
+        background: #f2f6fb;
+        color: #344054;
+        text-align: left;
+        padding: 14px;
+        font-size: 14px;
+        border-bottom: 1px solid #e4e7ec;
+    }
+
+    .erp-table td {
+        padding: 14px;
+        border-bottom: 1px solid #eef2f6;
+        color: #101828;
+        font-size: 14px;
+    }
+
+    .badge-active {
+        background: #dcfce7;
+        color: #166534;
+        padding: 5px 10px;
+        border-radius: 999px;
+        font-weight: 800;
+        font-size: 12px;
+    }
+
+    .badge-inactive {
+        background: #fee2e2;
+        color: #991b1b;
+        padding: 5px 10px;
+        border-radius: 999px;
+        font-weight: 800;
+        font-size: 12px;
+    }
+
+    .btn-edit {
+        background: #eef4ff;
+        color: #175cd3;
+        padding: 7px 12px;
+        border-radius: 7px;
+        text-decoration: none;
+        font-weight: 800;
+        font-size: 13px;
+        display: inline-block;
+        margin-right: 5px;
+    }
+
+    .btn-toggle {
+        background: #fffbeb;
+        color: #92400e;
+        padding: 7px 12px;
+        border-radius: 7px;
+        text-decoration: none;
+        font-weight: 800;
+        font-size: 13px;
+        display: inline-block;
+    }
+
+    .empty-row {
+        text-align: center;
+        padding: 30px;
+        color: #667085;
+        font-weight: 700;
+    }
+</style>
+
+<div class="page-wrap">
+
+    <div class="page-header">
+
+        <div class="page-title">
+            <h2>Platform School Management</h2>
+            <p>Create and manage tenant schools without accessing internal school records.</p>
+        </div>
+
+        <div class="header-actions">
+            <a href="{% url 'tenants:school_admins' %}" class="btn-secondary">
+                School Admins
+            </a>
+
+            <a href="{% url 'tenants:add_school' %}" class="btn-main">
+                + Add School
+            </a>
+        </div>
+
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="message {{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="summary-grid">
+
+        <div class="summary-card">
+            <h4>Total Schools</h4>
+            <h1>{{ total_schools }}</h1>
+        </div>
+
+        <div class="summary-card">
+            <h4>Active Schools</h4>
+            <h1>{{ active_schools }}</h1>
+        </div>
+
+        <div class="summary-card">
+            <h4>Inactive Schools</h4>
+            <h1>{{ inactive_schools }}</h1>
+        </div>
+
+    </div>
+
+    <div class="card-box">
+
+        <form method="get" class="search-box">
+            <input type="text" name="q" value="{{ search_query }}" placeholder="Search school name">
+            <button type="submit">Search</button>
+        </form>
+
+        <table class="erp-table">
+
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>School / Tenant</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for school in schools %}
+
+                    <tr>
+                        <td>{{ school.id }}</td>
+
+                        <td>
+                            <strong>{{ school }}</strong>
+                        </td>
+
+                        <td>
+                            {% if school.is_active %}
+                                <span class="badge-active">Active</span>
+                            {% else %}
+                                <span class="badge-inactive">Inactive</span>
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            <a href="{% url 'tenants:edit_school' school.id %}" class="btn-edit">
+                                Edit
+                            </a>
+
+                            <a href="{% url 'tenants:toggle_school_status' school.id %}" class="btn-toggle">
+                                {% if school.is_active %}
+                                    Deactivate
+                                {% else %}
+                                    Activate
+                                {% endif %}
+                            </a>
+                        </td>
+                    </tr>
+
+                {% empty %}
+
+                    <tr>
+                        <td colspan="4" class="empty-row">
+                            No schools found.
+                        </td>
+                    </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+{% endblock %}

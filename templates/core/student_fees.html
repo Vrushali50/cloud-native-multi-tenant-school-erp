@@ -1,0 +1,257 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+    .page-wrap {
+        padding: 25px;
+        background: #f5f7fb;
+        min-height: 100vh;
+    }
+
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 22px;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+    .page-title h2 {
+        margin: 0;
+        color: #102a43;
+        font-weight: 800;
+    }
+
+    .page-title p {
+        margin: 5px 0 0 0;
+        color: #667085;
+        font-size: 14px;
+    }
+
+    .btn-main {
+        background: #0f3b66;
+        color: white;
+        padding: 10px 16px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 700;
+    }
+
+    .btn-main:hover {
+        color: white;
+        background: #0b2f52;
+    }
+
+    .card-box {
+        background: white;
+        border-radius: 14px;
+        box-shadow: 0 8px 22px rgba(15, 23, 42, 0.08);
+        border: 1px solid #e4e7ec;
+        overflow: hidden;
+    }
+
+    .filter-box {
+        padding: 18px;
+        border-bottom: 1px solid #e4e7ec;
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .filter-box input,
+    .filter-box select {
+        padding: 10px 12px;
+        border: 1px solid #d0d5dd;
+        border-radius: 8px;
+    }
+
+    .filter-box input {
+        flex: 1;
+        min-width: 230px;
+    }
+
+    .filter-box button {
+        padding: 10px 18px;
+        border: none;
+        background: #0f3b66;
+        color: white;
+        border-radius: 8px;
+        font-weight: 700;
+    }
+
+    .table-wrap {
+        overflow-x: auto;
+    }
+
+    .erp-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .erp-table th {
+        background: #f2f6fb;
+        color: #344054;
+        text-align: left;
+        padding: 14px;
+        font-size: 14px;
+        border-bottom: 1px solid #e4e7ec;
+    }
+
+    .erp-table td {
+        padding: 14px;
+        border-bottom: 1px solid #eef2f6;
+        color: #101828;
+        font-size: 14px;
+    }
+
+    .badge-paid {
+        background: #dcfce7;
+        color: #166534;
+        padding: 5px 10px;
+        border-radius: 999px;
+        font-weight: 700;
+        font-size: 12px;
+    }
+
+    .badge-partial {
+        background: #fef3c7;
+        color: #92400e;
+        padding: 5px 10px;
+        border-radius: 999px;
+        font-weight: 700;
+        font-size: 12px;
+    }
+
+    .badge-pending {
+        background: #fee2e2;
+        color: #991b1b;
+        padding: 5px 10px;
+        border-radius: 999px;
+        font-weight: 700;
+        font-size: 12px;
+    }
+
+    .btn-pay {
+        background: #ecfdf3;
+        color: #067647;
+        padding: 7px 12px;
+        border-radius: 7px;
+        text-decoration: none;
+        font-weight: 800;
+        font-size: 13px;
+    }
+
+    .empty-row {
+        text-align: center;
+        padding: 30px;
+        color: #667085;
+    }
+</style>
+
+<div class="page-wrap">
+
+    <div class="page-header">
+        <div class="page-title">
+            <h2>Student Fees</h2>
+            <p>Assign fees, track payments, and collect pending balances.</p>
+        </div>
+
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <a href="{% url 'core:bulk_assign_student_fee' %}" class="btn-main">
+                + Bulk Assign Fee
+            </a>
+
+            <a href="{% url 'core:assign_student_fee' %}" class="btn-main" style="background:#475467;">
+                + Assign Single Fee
+            </a>
+        </div>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-success">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="card-box">
+
+        <form method="get" class="filter-box">
+            <input type="text" name="q" value="{{ search_query }}" placeholder="Search student or fee name">
+
+            <select name="status">
+                <option value="">All Status</option>
+                <option value="Pending" {% if status_filter == "Pending" %}selected{% endif %}>Pending</option>
+                <option value="Partially Paid" {% if status_filter == "Partially Paid" %}selected{% endif %}>Partially Paid</option>
+                <option value="Paid" {% if status_filter == "Paid" %}selected{% endif %}>Paid</option>
+            </select>
+
+            <button type="submit">Filter</button>
+        </form>
+
+        <div class="table-wrap">
+            <table class="erp-table">
+                <thead>
+                    <tr>
+                        <th>Student</th>
+                        <th>Fee Name</th>
+                        <th>Class</th>
+                        <th>Total</th>
+                        <th>Paid</th>
+                        <th>Balance</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for fee in student_fees %}
+                        <tr>
+                            <td>
+                                {{ fee.student.first_name }} {{ fee.student.last_name }}
+                                <br>
+                                <small>{{ fee.student.student_id }}</small>
+                            </td>
+                            <td>{{ fee.fee_structure.fee_name }}</td>
+                            <td>{{ fee.fee_structure.school_class.class_name }}</td>
+                            <td>£{{ fee.total_amount }}</td>
+                            <td>£{{ fee.paid_amount }}</td>
+                            <td>£{{ fee.balance_amount }}</td>
+                            <td>
+                                {% if fee.status == "Paid" %}
+                                    <span class="badge-paid">Paid</span>
+                                {% elif fee.status == "Partially Paid" %}
+                                    <span class="badge-partial">Partially Paid</span>
+                                {% else %}
+                                    <span class="badge-pending">Pending</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if fee.status != "Paid" %}
+                                    <a href="{% url 'core:collect_fee_payment' fee.id %}" class="btn-pay">
+                                        Collect
+                                    </a>
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="8" class="empty-row">
+                                No student fees found.
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

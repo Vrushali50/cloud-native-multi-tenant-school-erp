@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Teacher Profile</h1>
+
+<div style="
+    background:white;
+    padding:25px;
+    border-radius:10px;
+">
+
+    <p><strong>Teacher ID:</strong> {{ teacher.teacher_id }}</p>
+
+    <p>
+        <strong>Employee Number:</strong>
+        {{ teacher.employee_number|default:"Not Set" }}
+    </p>
+
+    <p>
+        <strong>Name:</strong>
+        {{ teacher.first_name }} {{ teacher.last_name }}
+    </p>
+
+    <p><strong>Email:</strong> {{ teacher.email }}</p>
+    <p><strong>Phone:</strong> {{ teacher.phone }}</p>
+
+    <p>
+        <strong>Qualification:</strong>
+        {{ teacher.qualification|default:"Not Set" }}
+    </p>
+
+    <p>
+        <strong>Hire Date:</strong>
+        {{ teacher.hire_date|default:"Not Set" }}
+    </p>
+
+    <p>
+        <strong>Status:</strong>
+        {% if teacher.is_active %}
+            Active
+        {% else %}
+            Inactive
+        {% endif %}
+    </p>
+
+    <h2>Teaching Assignments</h2>
+
+    {% for assignment in assignments %}
+        <p>
+            {{ assignment.subject.subject_name }}
+            —
+            {{ assignment.school_class.class_name }}
+            —
+            {{ assignment.section.section_name }}
+            —
+            {{ assignment.academic_year.year_name }}
+        </p>
+    {% empty %}
+        <p>No assignments found.</p>
+    {% endfor %}
+
+    {% if request.user.groups.all.0.name == "Teacher" %}
+
+    <a href="{% url 'accounts:teacher_dashboard' %}">
+        Back to Dashboard
+    </a>
+
+{% elif request.user.groups.all.0.name == "Student" %}
+
+    <a href="javascript:history.back()">
+        Back
+    </a>
+
+{% else %}
+
+    <a href="{% url 'core:teachers' %}">
+        Back to Teachers
+    </a>
+
+{% endif %}
+
+</div>
+
+{% endblock %}

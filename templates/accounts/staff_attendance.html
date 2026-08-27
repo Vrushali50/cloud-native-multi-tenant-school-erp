@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Staff Attendance</h1>
+
+<p>Record your daily attendance.</p>
+
+<br>
+
+<div style="
+    background:white;
+    padding:25px;
+    border-radius:10px;
+    box-shadow:0 3px 10px rgba(0,0,0,.15);
+    max-width:500px;
+">
+
+    <h3>Today's Attendance</h3>
+
+    <br>
+
+    <p>
+        <strong>Date:</strong>
+        {{ today }}
+    </p>
+
+    <br>
+
+    <p>
+        <strong>Check In:</strong>
+
+        {% if attendance %}
+            {{ attendance.check_in_time|default:"--" }}
+        {% else %}
+            --
+        {% endif %}
+    </p>
+
+    <br>
+
+    <p>
+        <strong>Check Out:</strong>
+
+        {% if attendance %}
+            {{ attendance.check_out_time|default:"--" }}
+        {% else %}
+            --
+        {% endif %}
+    </p>
+
+    <br>
+
+    <p>
+        <strong>Hours Worked:</strong>
+
+        {% if attendance %}
+            {{ attendance.hours_worked }}
+        {% else %}
+            0.00
+        {% endif %}
+    </p>
+
+    <br>
+
+    <form method="post">
+
+        {% csrf_token %}
+
+        {% if attendance %}
+
+            {% if attendance.check_out_time %}
+
+                <button
+                    disabled
+                    style="
+                        background:green;
+                        color:white;
+                        padding:12px 25px;
+                        border:none;
+                        border-radius:6px;
+                    ">
+                    Attendance Completed
+                </button>
+
+            {% else %}
+
+                <button
+                    type="submit"
+                    style="
+                        background:#f39c12;
+                        color:white;
+                        padding:12px 25px;
+                        border:none;
+                        border-radius:6px;
+                    ">
+                    Check Out
+                </button>
+
+            {% endif %}
+
+        {% else %}
+
+            <button
+                type="submit"
+                style="
+                    background:#2d89ef;
+                    color:white;
+                    padding:12px 25px;
+                    border:none;
+                    border-radius:6px;
+                ">
+                Check In
+            </button>
+
+        {% endif %}
+
+    </form>
+
+</div>
+
+{% endblock %}

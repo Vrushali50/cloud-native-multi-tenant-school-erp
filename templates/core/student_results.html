@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>My Results</h1>
+
+<table border="1" cellpadding="10">
+
+<tr>
+
+<th>Term</th>
+
+<th>Total</th>
+
+<th>%</th>
+
+<th>Grade</th>
+
+<th>Status</th>
+
+<th>Details</th>
+
+</tr>
+
+{% for result in results %}
+
+<tr>
+
+<td>{{ result.academic_term.term_name }}</td>
+
+<td>{{ result.total_marks }}</td>
+
+<td>{{ result.percentage }}%</td>
+
+<td>{{ result.grade }}</td>
+
+<td>{{ result.result_status }}</td>
+
+<td>
+
+<a href="{% url 'core:result_details' result.id %}">
+
+View
+
+</a>
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+{% endblock %}

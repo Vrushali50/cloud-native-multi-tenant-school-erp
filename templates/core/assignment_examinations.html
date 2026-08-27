@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Available Examinations</h1>
+
+<h3>
+
+{{ assignment.subject.subject_name }}
+
+-
+
+{{ assignment.school_class.class_name }}
+
+{{ assignment.section.section_name }}
+
+</h3>
+
+<table border="1" cellpadding="10">
+
+<tr>
+
+<th>Exam</th>
+
+<th>Date</th>
+
+<th>Start</th>
+
+<th>End</th>
+
+<th>Action</th>
+
+</tr>
+
+{% for examination in examinations %}
+
+<tr>
+
+<td>
+
+{{ examination.exam_name }}
+
+</td>
+
+<td>
+
+{{ examination.exam_date }}
+
+</td>
+
+<td>
+
+{{ examination.start_time }}
+
+</td>
+
+<td>
+
+{{ examination.end_time }}
+
+</td>
+
+<td>
+
+<a href="{% url 'core:enter_marks' assignment.id examination.id %}">
+
+Enter Marks
+
+</a>
+
+</td>
+
+</tr>
+
+{% empty %}
+
+<tr>
+
+<td colspan="5">
+
+No examinations available.
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+<br>
+
+<a href="{% url 'core:teacher_marks' %}">
+
+← Back
+
+</a>
+
+{% endblock %}

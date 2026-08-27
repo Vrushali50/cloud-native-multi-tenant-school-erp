@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Timetable Management</h1>
+
+<br>
+
+<form method="get">
+
+    <input
+        type="text"
+        name="search"
+        value="{{ search }}"
+        placeholder="Search Teacher">
+
+    <button type="submit">
+        Search
+    </button>
+
+    <a href="{% url 'core:add_timetable' %}">
+        + Add Timetable
+    </a>
+
+</form>
+
+<br>
+
+<table border="1" cellpadding="10" cellspacing="0">
+
+<tr>
+
+    <th>Teacher</th>
+    <th>Subject</th>
+    <th>Class</th>
+    <th>Section</th>
+    <th>Term</th>
+    <th>Day</th>
+    <th>Time</th>
+    <th>Room</th>
+    <th>Actions</th>
+
+</tr>
+
+{% for timetable in timetables %}
+
+<tr>
+
+<td>
+
+{{ timetable.teacher_assignment.teacher.first_name }}
+{{ timetable.teacher_assignment.teacher.last_name }}
+
+</td>
+
+<td>
+
+{{ timetable.teacher_assignment.subject.subject_name }}
+
+</td>
+
+<td>
+
+{{ timetable.teacher_assignment.school_class.class_name }}
+
+</td>
+
+<td>
+
+{{ timetable.teacher_assignment.section.section_name }}
+
+</td>
+
+<td>
+
+{{ timetable.academic_term.term_name }}
+
+</td>
+
+<td>
+
+{{ timetable.day }}
+
+</td>
+
+<td>
+
+{{ timetable.start_time }}
+
+-
+
+{{ timetable.end_time }}
+
+</td>
+
+<td>
+
+{{ timetable.room_number }}
+
+</td>
+
+<td>
+
+<a href="{% url 'core:edit_timetable' timetable.id %}">
+Edit
+</a>
+
+|
+
+<a href="{% url 'core:delete_timetable' timetable.id %}">
+Delete
+</a>
+
+</td>
+
+</tr>
+
+{% empty %}
+
+<tr>
+
+<td colspan="9">
+
+No Timetable Found.
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+{% endblock %}

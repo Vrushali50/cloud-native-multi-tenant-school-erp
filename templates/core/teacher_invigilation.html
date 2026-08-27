@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>My Invigilation Duties</h1>
+
+<table border="1" cellpadding="10">
+
+<tr>
+
+<th>Date</th>
+
+<th>Exam</th>
+
+<th>Class</th>
+
+<th>Section</th>
+
+<th>Hall</th>
+
+<th>Start</th>
+
+<th>End</th>
+
+</tr>
+
+{% for duty in invigilations %}
+
+<tr>
+
+<td>{{ duty.examination.exam_date }}</td>
+
+<td>{{ duty.examination.exam_name }}</td>
+
+<td>{{ duty.examination.school_class.class_name }}</td>
+
+<td>{{ duty.section.section_name }}</td>
+
+<td>{{ duty.hall_name }}</td>
+
+<td>{{ duty.examination.start_time }}</td>
+
+<td>{{ duty.examination.end_time }}</td>
+
+</tr>
+
+{% empty %}
+
+<tr>
+
+<td colspan="7">
+
+No invigilation duties assigned.
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+{% endblock %}

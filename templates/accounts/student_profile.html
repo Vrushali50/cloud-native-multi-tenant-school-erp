@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Student Profile</h1>
+
+<div style="
+    background:white;
+    padding:25px;
+    border-radius:10px;
+">
+
+    <p>
+        <strong>Student ID:</strong>
+        {{ student.student_id }}
+    </p>
+
+    <p>
+        <strong>Admission Number:</strong>
+        {{ student.admission_number|default:"Not Set" }}
+    </p>
+
+    <p>
+        <strong>Name:</strong>
+        {{ student.first_name }}
+        {{ student.last_name }}
+    </p>
+
+    <p>
+        <strong>Email:</strong>
+        {{ student.email }}
+    </p>
+
+    <p>
+        <strong>Phone:</strong>
+        {{ student.phone }}
+    </p>
+
+    <p>
+        <strong>Date of Birth:</strong>
+        {{ student.date_of_birth }}
+    </p>
+
+    <p>
+        <strong>Gender:</strong>
+        {{ student.gender }}
+    </p>
+
+    <p>
+        <strong>Class:</strong>
+
+        {% if student.school_class %}
+            {{ student.school_class.class_name }}
+        {% else %}
+            Not Assigned
+        {% endif %}
+    </p>
+
+    <p>
+        <strong>Section:</strong>
+
+        {% if student.section %}
+            {{ student.section.section_name }}
+        {% else %}
+            Not Assigned
+        {% endif %}
+    </p>
+
+    <p>
+        <strong>Admission Date:</strong>
+        {{ student.admission_date }}
+    </p>
+
+    <p>
+        <strong>Status:</strong>
+
+        {% if student.is_active %}
+            Active
+        {% else %}
+            Inactive
+        {% endif %}
+    </p>
+
+    {% if request.user.groups.all.0.name == "Student" %}
+
+        <a href="{% url 'accounts:student_dashboard' %}">
+            Back to Dashboard
+        </a>
+
+    {% elif request.user.groups.all.0.name == "Teacher" %}
+
+        <a href="javascript:history.back()">
+            Back
+        </a>
+
+    {% else %}
+
+        <a href="{% url 'core:students' %}">
+            Back to Students
+        </a>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

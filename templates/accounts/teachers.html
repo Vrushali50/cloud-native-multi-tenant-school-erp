@@ -2,37 +2,142 @@
 
 {% block content %}
 
-<h1>Teachers</h1>
+{% if messages %}
+    {% for message in messages %}
+        <div style="
+            background:#d1e7dd;
+            color:#0f5132;
+            padding:12px;
+            border-radius:5px;
+            margin-bottom:20px;
+        ">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
 
-<table style="width:100%; border-collapse:collapse; background:white;">
+<div style="
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+">
 
-    <tr style="background:#2d89ef; color:white;">
+    <div>
+        <h1>Teachers</h1>
+        <p>Manage teaching staff in the school.</p>
+    </div>
+
+    <a
+        href="{% url 'core:add_teacher' %}"
+        style="
+            background:#5b73f2;
+            color:white;
+            text-decoration:none;
+            padding:12px 20px;
+            border-radius:5px;
+        "
+    >
+        + Add Teacher
+    </a>
+
+</div>
+
+<form method="get" style="margin:20px 0;">
+
+    <input
+        type="text"
+        name="search"
+        value="{{ search }}"
+        placeholder="Search teacher..."
+        style="padding:10px;width:280px;"
+    >
+
+    <button type="submit">
+        Search
+    </button>
+
+    <a href="{% url 'core:teachers' %}">
+        Clear
+    </a>
+
+</form>
+
+<table style="
+    width:100%;
+    border-collapse:collapse;
+    background:white;
+">
+
+    <tr style="background:#5b73f2;color:white;">
         <th style="padding:15px;">Teacher ID</th>
         <th style="padding:15px;">Name</th>
         <th style="padding:15px;">Email</th>
-        <th style="padding:15px;">Phone</th>
-        <th style="padding:15px;">Subject</th>
+        <th style="padding:15px;">Status</th>
+        <th style="padding:15px;">Actions</th>
     </tr>
 
     {% for teacher in teachers %}
 
-    <tr>
-        <td style="padding:15px;">{{ teacher.teacher_id }}</td>
-        <td style="padding:15px;">
-            {{ teacher.first_name }} {{ teacher.last_name }}
-        </td>
-        <td style="padding:15px;">{{ teacher.email }}</td>
-        <td style="padding:15px;">{{ teacher.phone }}</td>
-        <td style="padding:15px;">{{ teacher.subject }}</td>
-    </tr>
+        <tr>
+
+            <td style="padding:15px;">
+                {{ teacher.teacher_id }}
+            </td>
+
+            <td style="padding:15px;">
+                {{ teacher.first_name }}
+                {{ teacher.last_name }}
+            </td>
+
+            <td style="padding:15px;">
+                {{ teacher.email }}
+            </td>
+
+            <td style="padding:15px;">
+                {% if teacher.is_active %}
+                    <span style="color:green;font-weight:bold;">
+                        Active
+                    </span>
+                {% else %}
+                    <span style="color:red;font-weight:bold;">
+                        Inactive
+                    </span>
+                {% endif %}
+            </td>
+
+            <td style="padding:15px;">
+
+                <a href="{% url 'core:teacher_profile' teacher.id %}">
+                    View
+                </a>
+
+                &nbsp;
+
+                <a href="{% url 'core:edit_teacher' teacher.id %}">
+                    Edit
+                </a>
+
+                &nbsp;
+
+                <a href="{% url 'core:toggle_teacher_status' teacher.id %}">
+                    {% if teacher.is_active %}
+                        Deactivate
+                    {% else %}
+                        Activate
+                    {% endif %}
+                </a>
+
+            </td>
+
+        </tr>
 
     {% empty %}
 
-    <tr>
-        <td colspan="5" style="padding:20px; text-align:center;">
-            No teachers found.
-        </td>
-    </tr>
+        <tr>
+            <td colspan="5" style="padding:20px;text-align:center;">
+                No teachers found.
+            </td>
+        </tr>
 
     {% endfor %}
 

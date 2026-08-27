@@ -1,0 +1,380 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+    .page-wrap {
+        padding: 25px;
+        background: #f5f7fb;
+        min-height: 100vh;
+    }
+
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+        flex-wrap: wrap;
+        margin-bottom: 22px;
+    }
+
+    .page-title h2 {
+        margin: 0;
+        color: #102a43;
+        font-weight: 800;
+        font-size: 28px;
+    }
+
+    .page-title p {
+        margin: 6px 0 0 0;
+        color: #667085;
+        font-size: 14px;
+    }
+
+    .btn-main {
+        background: #0f3b66;
+        color: white;
+        padding: 11px 18px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 800;
+        display: inline-block;
+    }
+
+    .btn-main:hover {
+        background: #0b2f52;
+        color: white;
+    }
+
+    .filter-box {
+        background: white;
+        padding: 18px;
+        border-radius: 14px;
+        border: 1px solid #e4e7ec;
+        box-shadow: 0 8px 22px rgba(15, 23, 42, 0.08);
+        margin-bottom: 22px;
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .filter-box input,
+    .filter-box select {
+        padding: 11px 12px;
+        border: 1px solid #d0d5dd;
+        border-radius: 8px;
+        outline: none;
+    }
+
+    .filter-box input {
+        flex: 1;
+        min-width: 230px;
+    }
+
+    .filter-box button {
+        background: #0f3b66;
+        color: white;
+        border: none;
+        padding: 11px 18px;
+        border-radius: 8px;
+        font-weight: 800;
+        cursor: pointer;
+    }
+
+    .announcement-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 18px;
+    }
+
+    .announcement-card {
+        background: white;
+        border-radius: 16px;
+        border: 1px solid #e4e7ec;
+        box-shadow: 0 8px 22px rgba(15, 23, 42, 0.08);
+        overflow: hidden;
+    }
+
+    .announcement-top {
+        padding: 18px 20px;
+        background: #f2f6fb;
+        border-bottom: 1px solid #e4e7ec;
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        align-items: flex-start;
+    }
+
+    .announcement-title h3 {
+        margin: 0;
+        color: #0f3b66;
+        font-size: 20px;
+        font-weight: 800;
+    }
+
+    .announcement-title small {
+        display: block;
+        margin-top: 5px;
+        color: #667085;
+        font-size: 13px;
+    }
+
+    .announcement-body {
+        padding: 20px;
+    }
+
+    .announcement-message {
+        color: #344054;
+        font-size: 14px;
+        line-height: 1.7;
+        margin-bottom: 16px;
+        white-space: pre-line;
+    }
+
+    .meta-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 16px;
+    }
+
+    .badge {
+        display: inline-block;
+        padding: 5px 10px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 800;
+    }
+
+    .badge-target {
+        background: #eef4ff;
+        color: #175cd3;
+    }
+
+    .badge-low {
+        background: #f2f4f7;
+        color: #344054;
+    }
+
+    .badge-normal {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    .badge-high {
+        background: #fef3c7;
+        color: #92400e;
+    }
+
+    .badge-urgent {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+    .badge-active {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    .badge-inactive {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+    .action-row {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        border-top: 1px solid #eef2f6;
+        padding-top: 15px;
+    }
+
+    .btn-edit {
+        background: #eef4ff;
+        color: #175cd3;
+        padding: 7px 12px;
+        border-radius: 7px;
+        text-decoration: none;
+        font-weight: 800;
+        font-size: 13px;
+    }
+
+    .btn-toggle {
+        background: #fffbeb;
+        color: #92400e;
+        padding: 7px 12px;
+        border-radius: 7px;
+        text-decoration: none;
+        font-weight: 800;
+        font-size: 13px;
+    }
+
+    .empty-box {
+        background: white;
+        border-radius: 14px;
+        padding: 35px;
+        text-align: center;
+        color: #667085;
+        font-weight: 700;
+        border: 1px solid #e4e7ec;
+        box-shadow: 0 8px 22px rgba(15, 23, 42, 0.08);
+    }
+
+    @media (max-width: 900px) {
+        .announcement-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="page-wrap">
+
+    <div class="page-header">
+
+        <div class="page-title">
+            <h2>Announcements</h2>
+            <p>View school announcements and important notices.</p>
+        </div>
+
+        {% if can_manage %}
+            <a href="{% url 'core:add_announcement' %}" class="btn-main">
+                + Add Announcement
+            </a>
+        {% endif %}
+
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="message {{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <form method="get" class="filter-box">
+
+        <input type="text"
+               name="q"
+               value="{{ search_query }}"
+               placeholder="Search announcement">
+
+        {% if can_manage %}
+
+            <select name="target">
+                <option value="">All Targets</option>
+                <option value="All" {% if target_filter == "All" %}selected{% endif %}>All</option>
+                <option value="School Admin" {% if target_filter == "School Admin" %}selected{% endif %}>School Admin</option>
+                <option value="Teacher" {% if target_filter == "Teacher" %}selected{% endif %}>Teacher</option>
+                <option value="Student" {% if target_filter == "Student" %}selected{% endif %}>Student</option>
+                <option value="Accountant" {% if target_filter == "Accountant" %}selected{% endif %}>Accountant</option>
+                <option value="Librarian" {% if target_filter == "Librarian" %}selected{% endif %}>Librarian</option>
+            </select>
+
+        {% endif %}
+
+        <select name="priority">
+            <option value="">All Priorities</option>
+            <option value="Low" {% if priority_filter == "Low" %}selected{% endif %}>Low</option>
+            <option value="Normal" {% if priority_filter == "Normal" %}selected{% endif %}>Normal</option>
+            <option value="High" {% if priority_filter == "High" %}selected{% endif %}>High</option>
+            <option value="Urgent" {% if priority_filter == "Urgent" %}selected{% endif %}>Urgent</option>
+        </select>
+
+        <button type="submit">
+            Filter
+        </button>
+
+    </form>
+
+    {% if announcements %}
+
+        <div class="announcement-grid">
+
+            {% for announcement in announcements %}
+
+                <div class="announcement-card">
+
+                    <div class="announcement-top">
+
+                        <div class="announcement-title">
+                            <h3>{{ announcement.title }}</h3>
+                            <small>
+                                {{ announcement.start_date|date:"d M Y" }}
+                                {% if announcement.end_date %}
+                                    - {{ announcement.end_date|date:"d M Y" }}
+                                {% endif %}
+                            </small>
+                        </div>
+
+                        {% if announcement.is_active %}
+                            <span class="badge badge-active">Active</span>
+                        {% else %}
+                            <span class="badge badge-inactive">Inactive</span>
+                        {% endif %}
+
+                    </div>
+
+                    <div class="announcement-body">
+
+                        <div class="meta-row">
+
+                            <span class="badge badge-target">
+                                Target: {{ announcement.target_role }}
+                            </span>
+
+                            {% if announcement.priority == "Low" %}
+                                <span class="badge badge-low">Low</span>
+                            {% elif announcement.priority == "Normal" %}
+                                <span class="badge badge-normal">Normal</span>
+                            {% elif announcement.priority == "High" %}
+                                <span class="badge badge-high">High</span>
+                            {% else %}
+                                <span class="badge badge-urgent">Urgent</span>
+                            {% endif %}
+
+                        </div>
+
+                        <div class="announcement-message">
+                            {{ announcement.message }}
+                        </div>
+
+                        {% if can_manage %}
+
+                            <div class="action-row">
+
+                                <a href="{% url 'core:edit_announcement' announcement.id %}" class="btn-edit">
+                                    Edit
+                                </a>
+
+                                <a href="{% url 'core:toggle_announcement_status' announcement.id %}" class="btn-toggle">
+                                    {% if announcement.is_active %}
+                                        Deactivate
+                                    {% else %}
+                                        Activate
+                                    {% endif %}
+                                </a>
+
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="empty-box">
+            No announcements found.
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

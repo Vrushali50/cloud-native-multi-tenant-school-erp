@@ -1,0 +1,316 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% if messages %}
+    {% for message in messages %}
+        <div style="
+            background:#d1e7dd;
+            color:#0f5132;
+            padding:12px 15px;
+            border-radius:5px;
+            margin-bottom:20px;
+            border:1px solid #badbcc;
+        ">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
+
+
+<div style="
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:20px;
+">
+
+    <div>
+        <h1>User Management</h1>
+
+        <p>
+            Manage all users in the ERP system.
+        </p>
+    </div>
+
+    <a
+        href="{% url 'accounts:add_user' %}"
+        style="
+            background:#2d89ef;
+            color:white;
+            text-decoration:none;
+            padding:12px 20px;
+            border-radius:5px;
+        "
+    >
+        + Add User
+    </a>
+
+</div>
+
+
+<form method="get" style="
+    display:flex;
+    gap:10px;
+    align-items:center;
+    margin-bottom:20px;
+    flex-wrap:wrap;
+">
+
+    <input
+        type="text"
+        name="search"
+        value="{{ search }}"
+        placeholder="Search username..."
+        style="
+            padding:10px;
+            border:1px solid #ccc;
+            border-radius:5px;
+            width:220px;
+        "
+    >
+
+    <select
+        name="role"
+        style="
+            padding:10px;
+            border:1px solid #ccc;
+            border-radius:5px;
+        "
+    >
+        <option value="">All Roles</option>
+
+        <option value="Product Owner"
+            {% if selected_role == "Product Owner" %}selected{% endif %}>
+            Product Owner
+        </option>
+
+        <option value="School Admin"
+            {% if selected_role == "School Admin" %}selected{% endif %}>
+            School Admin
+        </option>
+
+        <option value="Teacher"
+            {% if selected_role == "Teacher" %}selected{% endif %}>
+            Teacher
+        </option>
+
+        <option value="Student"
+            {% if selected_role == "Student" %}selected{% endif %}>
+            Student
+        </option>
+
+        <option value="Accountant"
+            {% if selected_role == "Accountant" %}selected{% endif %}>
+            Accountant
+        </option>
+
+        <option value="Librarian"
+            {% if selected_role == "Librarian" %}selected{% endif %}>
+            Librarian
+        </option>
+
+    </select>
+
+    <button
+        type="submit"
+        style="
+            background:#2d89ef;
+            color:white;
+            border:none;
+            padding:10px 18px;
+            border-radius:5px;
+            cursor:pointer;
+        "
+    >
+        Search
+    </button>
+
+    <a
+        href="{% url 'accounts:user_list' %}"
+        style="
+            background:#6c757d;
+            color:white;
+            text-decoration:none;
+            padding:10px 18px;
+            border-radius:5px;
+        "
+    >
+        Clear
+    </a>
+
+</form>
+
+
+<table style="
+    width:100%;
+    border-collapse:collapse;
+    background:white;
+">
+
+    <tr style="
+        background:#2d89ef;
+        color:white;
+    ">
+
+        <th style="padding:15px;">
+            Username
+        </th>
+
+        <th style="padding:15px;">
+            Email
+        </th>
+
+        <th style="padding:15px;">
+            Tenant
+        </th>
+
+        <th style="padding:15px;">
+            Role
+        </th>
+
+        <th style="padding:15px;">
+            Status
+        </th>
+
+        <th style="padding:15px;">
+            Actions
+        </th>
+
+    </tr>
+
+
+    {% for user in users %}
+
+    <tr>
+
+        <td style="padding:15px;">
+            {{ user.username }}
+        </td>
+
+
+        <td style="padding:15px;">
+            {{ user.email }}
+        </td>
+
+
+        <td style="padding:15px;">
+
+            {% if user.tenant %}
+                {{ user.tenant.school_name }}
+            {% else %}
+                No Tenant
+            {% endif %}
+
+        </td>
+
+
+        <td style="padding:15px;">
+
+            {% if user.groups.first %}
+                {{ user.groups.first.name }}
+            {% else %}
+                No Role
+            {% endif %}
+
+        </td>
+
+
+        <td style="padding:15px;">
+
+            {% if user.is_active %}
+
+                <span style="
+                    color:#198754;
+                    font-weight:bold;
+                ">
+                    Active
+                </span>
+
+            {% else %}
+
+                <span style="
+                    color:#dc3545;
+                    font-weight:bold;
+                ">
+                    Inactive
+                </span>
+
+            {% endif %}
+
+        </td>
+
+
+        <td style="padding:15px;">
+
+            <a
+                href="{% url 'accounts:edit_user' user.id %}"
+                style="
+                    background:#2d89ef;
+                    color:white;
+                    text-decoration:none;
+                    padding:8px 15px;
+                    border-radius:5px;
+                    margin-right:5px;
+                "
+            >
+                Edit
+            </a>
+
+
+            {% if user.is_active %}
+
+                <a
+                    href="{% url 'accounts:toggle_user_status' user.id %}"
+                    style="
+                        background:#dc3545;
+                        color:white;
+                        text-decoration:none;
+                        padding:8px 15px;
+                        border-radius:5px;
+                    "
+                >
+                    Deactivate
+                </a>
+
+            {% else %}
+
+                <a
+                    href="{% url 'accounts:toggle_user_status' user.id %}"
+                    style="
+                        background:#198754;
+                        color:white;
+                        text-decoration:none;
+                        padding:8px 15px;
+                        border-radius:5px;
+                    "
+                >
+                    Activate
+                </a>
+
+            {% endif %}
+
+        </td>
+
+    </tr>
+
+
+    {% empty %}
+
+    <tr>
+        <td
+            colspan="6"
+            style="
+                padding:20px;
+                text-align:center;
+            "
+        >
+            No users found.
+        </td>
+    </tr>
+
+    {% endfor %}
+
+</table>
+
+{% endblock %}

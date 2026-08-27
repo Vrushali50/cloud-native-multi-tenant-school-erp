@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% if messages %}
+    {% for message in messages %}
+        <div style="
+            background:#d1e7dd;
+            color:#0f5132;
+            padding:12px 15px;
+            border-radius:5px;
+            margin-bottom:20px;
+        ">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
+
+
+<div style="
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:20px;
+">
+
+    <div>
+        <h1>Sections</h1>
+
+        <p>
+            Manage sections for each class.
+        </p>
+    </div>
+
+    <a
+        href="{% url 'core:add_section' %}"
+        style="
+            background:#5b73f2;
+            color:white;
+            text-decoration:none;
+            padding:12px 20px;
+            border-radius:5px;
+        "
+    >
+        + Add Section
+    </a>
+
+</div>
+
+
+<table style="
+    width:100%;
+    border-collapse:collapse;
+    background:white;
+">
+
+    <tr style="
+        background:#5b73f2;
+        color:white;
+    ">
+
+        <th style="padding:15px;">
+            Section Name
+        </th>
+
+        <th style="padding:15px;">
+            Class
+        </th>
+
+        <th style="padding:15px;">
+            Academic Year
+        </th>
+
+        <th style="padding:15px;">
+            Tenant
+        </th>
+
+        <th style="padding:15px;">
+            Actions
+        </th>
+
+    </tr>
+
+
+    {% for section in sections %}
+
+        <tr>
+
+            <td style="padding:15px;">
+                {{ section.section_name }}
+            </td>
+
+            <td style="padding:15px;">
+                {{ section.school_class.class_name }}
+            </td>
+
+            <td style="padding:15px;">
+                {{ section.school_class.academic_year.year_name }}
+            </td>
+
+            <td style="padding:15px;">
+                {{ section.school_class.tenant }}
+            </td>
+
+            <td style="
+                padding:15px;
+                text-align:center;
+            ">
+
+                <a
+                    href="{% url 'core:edit_section' section.id %}"
+                    style="
+                        background:#2d89ef;
+                        color:white;
+                        text-decoration:none;
+                        padding:8px 15px;
+                        border-radius:5px;
+                        display:inline-block;
+                    "
+                >
+                    Edit
+                </a>
+
+            </td>
+
+        </tr>
+
+    {% empty %}
+
+        <tr>
+
+            <td
+                colspan="5"
+                style="
+                    padding:20px;
+                    text-align:center;
+                "
+            >
+                No sections found.
+            </td>
+
+        </tr>
+
+    {% endfor %}
+
+</table>
+
+{% endblock %}

@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div style="
+    max-width:700px;
+    background:white;
+    padding:30px;
+    border-radius:10px;
+    box-shadow:0 5px 15px rgba(0,0,0,0.12);
+">
+
+    <h1>Add Subject</h1>
+
+    <p style="margin-bottom:25px; color:#666;">
+        Create a new subject.
+    </p>
+
+    <form method="post">
+
+        {% csrf_token %}
+
+        {% for field in form %}
+
+            <div style="margin-bottom:18px;">
+
+                <label
+                    for="{{ field.id_for_label }}"
+                    style="
+                        display:block;
+                        margin-bottom:6px;
+                        font-weight:bold;
+                    "
+                >
+                    {{ field.label }}
+                </label>
+
+                {{ field }}
+
+                {% for error in field.errors %}
+                    <small style="
+                        display:block;
+                        color:#b02a37;
+                        margin-top:5px;
+                    ">
+                        {{ error }}
+                    </small>
+                {% endfor %}
+
+            </div>
+
+        {% endfor %}
+
+        <button
+            type="submit"
+            style="
+                background:#5b73f2;
+                color:white;
+                border:none;
+                padding:12px 22px;
+                border-radius:5px;
+                cursor:pointer;
+            "
+        >
+            Save Subject
+        </button>
+
+        <a
+            href="{% url 'core:subjects' %}"
+            style="
+                background:#6c757d;
+                color:white;
+                text-decoration:none;
+                padding:12px 22px;
+                border-radius:5px;
+                margin-left:10px;
+            "
+        >
+            Cancel
+        </a>
+
+    </form>
+
+</div>
+
+{% endblock %}

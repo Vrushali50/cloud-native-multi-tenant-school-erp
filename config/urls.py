@@ -6,5 +6,6 @@ urlpatterns = [
     path("", RedirectView.as_view(url="accounts/login/")),
     path("admin/", admin.site.urls),
     path("accounts/", include("accounts.urls")),
-     path("", include("core.urls")),
+    path("", include("core.urls")),
+    path("platform/",include("tenants.urls")),
 ]

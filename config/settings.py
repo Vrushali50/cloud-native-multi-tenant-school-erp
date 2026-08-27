@@ -21,24 +21,32 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-!sufzixrz45ay)*x@8m*%-sc9up25g#htalk0a6uok_*$-75kk'
-
-# SECURITY WARNING: don't run with debug turned on in production!
+SECRET_KEY = os.environ.get(
+    "SECRET_KEY",
+    "django-local-dev-secret-key",
+)
 DEBUG = True
+# DEBUG = os.environ.get(
+#     "DEBUG",
+#     "1",
+# ) == "1"
+
+ALLOWED_HOSTS = [
+    "127.0.0.1",
+    "localhost",
+    "0.0.0.0",
+]
 
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "school_erp_db",
-        "USER": "postgres",
-        "PASSWORD": "admin@2820",
-        "HOST": "localhost",
-        "PORT": "5432",
+        "NAME": os.environ.get("DB_NAME", "school_erp_db"),
+        "USER": os.environ.get("DB_USER", "postgres"),
+        "PASSWORD": os.environ.get("DB_PASSWORD", "postgres"),
+        "HOST": os.environ.get("DB_HOST", "localhost"),
+        "PORT": os.environ.get("DB_PORT", "5432"),
     }
 }
-
-ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -58,12 +66,14 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'tenants.middleware.ActiveTenantMiddleware',
 ]
 
 ROOT_URLCONF = 'config.urls'

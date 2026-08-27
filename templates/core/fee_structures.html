@@ -1,0 +1,223 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+    .page-wrap {
+        padding: 25px;
+        background: #f5f7fb;
+        min-height: 100vh;
+    }
+
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 22px;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+    .page-title h2 {
+        margin: 0;
+        color: #102a43;
+        font-weight: 800;
+    }
+
+    .page-title p {
+        margin: 5px 0 0 0;
+        color: #667085;
+        font-size: 14px;
+    }
+
+    .btn-main {
+        background: #0f3b66;
+        color: white;
+        padding: 10px 16px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 700;
+        display: inline-block;
+    }
+
+    .btn-main:hover {
+        color: white;
+        background: #0b2f52;
+    }
+
+    .card-box {
+        background: white;
+        border-radius: 14px;
+        box-shadow: 0 8px 22px rgba(15, 23, 42, 0.08);
+        border: 1px solid #e4e7ec;
+        overflow: hidden;
+    }
+
+    .search-box {
+        padding: 18px;
+        border-bottom: 1px solid #e4e7ec;
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .search-box input {
+        flex: 1;
+        min-width: 230px;
+        padding: 10px 12px;
+        border: 1px solid #d0d5dd;
+        border-radius: 8px;
+    }
+
+    .search-box button {
+        padding: 10px 18px;
+        border: none;
+        background: #0f3b66;
+        color: white;
+        border-radius: 8px;
+        font-weight: 700;
+    }
+
+    .table-wrap {
+        overflow-x: auto;
+    }
+
+    .erp-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .erp-table th {
+        background: #f2f6fb;
+        color: #344054;
+        text-align: left;
+        padding: 14px;
+        font-size: 14px;
+        border-bottom: 1px solid #e4e7ec;
+    }
+
+    .erp-table td {
+        padding: 14px;
+        border-bottom: 1px solid #eef2f6;
+        color: #101828;
+        font-size: 14px;
+    }
+
+    .erp-table tr:hover {
+        background: #f9fafb;
+    }
+
+    .badge-active {
+        background: #dcfce7;
+        color: #166534;
+        padding: 5px 10px;
+        border-radius: 999px;
+        font-weight: 700;
+        font-size: 12px;
+    }
+
+    .badge-inactive {
+        background: #fee2e2;
+        color: #991b1b;
+        padding: 5px 10px;
+        border-radius: 999px;
+        font-weight: 700;
+        font-size: 12px;
+    }
+
+    .btn-edit {
+        background: #eef4ff;
+        color: #175cd3;
+        padding: 7px 12px;
+        border-radius: 7px;
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 13px;
+    }
+
+    .empty-row {
+        text-align: center;
+        padding: 30px;
+        color: #667085;
+    }
+</style>
+
+<div class="page-wrap">
+
+    <div class="page-header">
+        <div class="page-title">
+            <h2>Fee Structures</h2>
+            <p>Create and manage class-wise academic fee structures.</p>
+        </div>
+
+        <a href="{% url 'core:add_fee_structure' %}" class="btn-main">
+            + Add Fee Structure
+        </a>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-success">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="card-box">
+
+        <form method="get" class="search-box">
+            <input type="text" name="q" value="{{ search_query }}" placeholder="Search by fee name, class, or term">
+            <button type="submit">Search</button>
+        </form>
+
+        <div class="table-wrap">
+            <table class="erp-table">
+                <thead>
+                    <tr>
+                        <th>Fee Name</th>
+                        <th>Class</th>
+                        <th>Academic Term</th>
+                        <th>Amount</th>
+                        <th>Due Date</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for fee in fee_structures %}
+                        <tr>
+                            <td>{{ fee.fee_name }}</td>
+                            <td>{{ fee.school_class.class_name }}</td>
+                            <td>{{ fee.academic_term.term_name }}</td>
+                            <td>£{{ fee.amount }}</td>
+                            <td>{{ fee.due_date|date:"d M Y" }}</td>
+                            <td>
+                                {% if fee.is_active %}
+                                    <span class="badge-active">Active</span>
+                                {% else %}
+                                    <span class="badge-inactive">Inactive</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{% url 'core:edit_fee_structure' fee.id %}" class="btn-edit">
+                                    Edit
+                                </a>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="7" class="empty-row">
+                                No fee structures found.
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

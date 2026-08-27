@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Examination Management</h1>
+
+<br>
+
+<form method="get">
+
+    <input
+        type="text"
+        name="search"
+        value="{{ search }}"
+        placeholder="Search Examination">
+
+    <button>
+
+        Search
+
+    </button>
+
+    <a href="{% url 'core:add_examination' %}">
+
+        + Add Examination
+
+    </a>
+
+</form>
+
+<br>
+
+<table border="1" cellpadding="10">
+
+<tr>
+
+<th>Exam</th>
+
+<th>Class</th>
+
+<th>Subject</th>
+
+<th>Type</th>
+
+<th>Date</th>
+
+<th>Status</th>
+
+<th>Actions</th>
+
+</tr>
+
+{% for examination in examinations %}
+
+<tr>
+
+<td>
+
+{{ examination.exam_name }}
+
+</td>
+
+<td>
+
+{{ examination.school_class.class_name }}
+
+</td>
+
+<td>
+
+{{ examination.subject.subject_name }}
+
+</td>
+
+<td>
+
+{{ examination.exam_type }}
+
+</td>
+
+<td>
+
+{{ examination.exam_date }}
+
+</td>
+
+<td>
+
+{% if examination.is_published %}
+
+Published
+
+{% else %}
+
+Draft
+
+{% endif %}
+
+</td>
+
+<td>
+
+<a href="{% url 'core:edit_examination' examination.id %}">
+
+Edit
+
+</a>
+
+|
+
+<a href="{% url 'core:manage_exam_halls' examination.id %}">
+
+Manage Halls
+
+</a>
+
+|
+
+<a href="{% url 'core:toggle_exam_publish' examination.id %}">
+
+{% if examination.is_published %}
+
+Unpublish
+
+{% else %}
+
+Publish
+
+{% endif %}
+
+</a>
+
+|
+
+<a href="{% url 'core:delete_examination' examination.id %}">
+
+Delete
+
+</a>
+
+</td>
+
+</tr>
+
+{% empty %}
+
+<tr>
+
+<td colspan="7">
+
+No examinations found.
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+{% endblock %}

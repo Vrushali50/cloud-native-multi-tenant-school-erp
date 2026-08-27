@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>School Deactivated</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            background: #f5f7fb;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 25px;
+        }
+
+        .inactive-card {
+            max-width: 620px;
+            width: 100%;
+            background: white;
+            border-radius: 18px;
+            padding: 38px;
+            box-shadow: 0 12px 30px rgba(15, 23, 42, 0.12);
+            border: 1px solid #e4e7ec;
+            text-align: center;
+        }
+
+        .icon {
+            font-size: 58px;
+            margin-bottom: 18px;
+        }
+
+        h1 {
+            margin: 0;
+            color: #b42318;
+            font-size: 30px;
+            font-weight: 800;
+        }
+
+        p {
+            color: #475467;
+            font-size: 16px;
+            line-height: 1.6;
+            margin-top: 14px;
+        }
+
+        .notice {
+            margin-top: 22px;
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 14px 16px;
+            border-radius: 10px;
+            font-weight: 700;
+            line-height: 1.5;
+        }
+
+        .logout-btn {
+            margin-top: 28px;
+            background: #0f3b66;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 9px;
+            font-weight: 800;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        .logout-btn:hover {
+            background: #0b2f52;
+        }
+    </style>
+
+</head>
+
+<body>
+
+<div class="inactive-card">
+
+    <div class="icon">
+        ⛔
+    </div>
+
+    <h1>
+        School Account Deactivated
+    </h1>
+
+    <p>
+        Your school account is currently inactive on the ERP platform.
+        You cannot access school modules until the Product Owner activates the school again.
+    </p>
+
+    <div class="notice">
+        Please contact the platform owner or system administrator for activation.
+    </div>
+
+    <form method="post" action="{% url 'accounts:logout' %}">
+        {% csrf_token %}
+
+        <button type="submit" class="logout-btn">
+            Logout
+        </button>
+    </form>
+
+</div>
+
+</body>
+
+</html>

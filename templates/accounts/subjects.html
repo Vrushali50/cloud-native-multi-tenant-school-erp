@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% if messages %}
+    {% for message in messages %}
+        <div style="
+            background:#d1e7dd;
+            color:#0f5132;
+            padding:12px 15px;
+            border-radius:5px;
+            margin-bottom:20px;
+        ">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
+
+<div style="
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:20px;
+">
+
+    <div>
+        <h1>Subjects</h1>
+        <p>Manage subjects offered by the school.</p>
+    </div>
+
+    <a
+        href="{% url 'core:add_subject' %}"
+        style="
+            background:#5b73f2;
+            color:white;
+            text-decoration:none;
+            padding:12px 20px;
+            border-radius:5px;
+        "
+    >
+        + Add Subject
+    </a>
+
+</div>
+
+<table style="
+    width:100%;
+    border-collapse:collapse;
+    background:white;
+">
+
+    <tr style="
+        background:#5b73f2;
+        color:white;
+    ">
+        <th style="padding:15px;">Subject Code</th>
+        <th style="padding:15px;">Subject Name</th>
+        <th style="padding:15px;">Tenant</th>
+        <th style="padding:15px;">Actions</th>
+    </tr>
+
+    {% for subject in subjects %}
+
+        <tr>
+
+            <td style="padding:15px;">
+                {{ subject.subject_code }}
+            </td>
+
+            <td style="padding:15px;">
+                {{ subject.subject_name }}
+            </td>
+
+            <td style="padding:15px;">
+                {{ subject.tenant }}
+            </td>
+
+            <td style="padding:15px; text-align:center;">
+
+                <a
+                    href="{% url 'core:edit_subject' subject.id %}"
+                    style="
+                        background:#2d89ef;
+                        color:white;
+                        text-decoration:none;
+                        padding:8px 15px;
+                        border-radius:5px;
+                    "
+                >
+                    Edit
+                </a>
+
+            </td>
+
+        </tr>
+
+    {% empty %}
+
+        <tr>
+            <td
+                colspan="4"
+                style="
+                    padding:20px;
+                    text-align:center;
+                "
+            >
+                No subjects found.
+            </td>
+        </tr>
+
+    {% endfor %}
+
+</table>
+
+{% endblock %}

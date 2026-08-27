@@ -1,0 +1,659 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+    .report-wrapper {
+        padding: 28px 18px;
+        background: #f4f6f9;
+        min-height: calc(100vh - 80px);
+    }
+
+    .report-actions {
+        max-width: 1040px;
+        margin: 0 auto 18px auto;
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .report-action-btn {
+        display: inline-block;
+        padding: 10px 18px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        text-decoration: none;
+        border: 1px solid transparent;
+    }
+
+    .btn-print-report {
+        background: #198754;
+        color: white;
+        border-color: #198754;
+    }
+
+    .btn-print-report:hover {
+        color: white;
+        background: #157347;
+    }
+
+    .btn-back-report {
+        background: white;
+        color: #344054;
+        border-color: #cfd5df;
+    }
+
+    .btn-back-report:hover {
+        background: #f8f9fb;
+        color: #111827;
+    }
+
+    .report-paper {
+        max-width: 1040px;
+        margin: 0 auto;
+        background: white;
+        border: 1px solid #d8dee8;
+        box-shadow: 0 12px 30px rgba(15, 23, 42, 0.10);
+        border-radius: 14px;
+        overflow: hidden;
+    }
+
+    .report-top-border {
+        height: 8px;
+        background: linear-gradient(90deg, #0f3b66, #1d6fb8);
+    }
+
+    .report-inner {
+        padding: 34px 42px 38px 42px;
+    }
+
+    .report-header {
+        display: flex;
+        justify-content: space-between;
+        gap: 22px;
+        align-items: flex-start;
+        border-bottom: 2px solid #0f3b66;
+        padding-bottom: 20px;
+        margin-bottom: 24px;
+    }
+
+    .school-title {
+        margin: 0;
+        color: #0f3b66;
+        font-size: 28px;
+        font-weight: 800;
+        letter-spacing: 0.4px;
+        text-transform: uppercase;
+    }
+
+    .report-subtitle {
+        margin: 6px 0 0 0;
+        color: #667085;
+        font-size: 14px;
+    }
+
+    .report-title-box {
+        text-align: right;
+    }
+
+    .report-title {
+        margin: 0;
+        color: #111827;
+        font-size: 24px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.6px;
+    }
+
+    .report-generated {
+        margin-top: 6px;
+        color: #667085;
+        font-size: 13px;
+    }
+
+    .status-pill {
+        display: inline-block;
+        margin-top: 12px;
+        padding: 7px 14px;
+        border-radius: 999px;
+        font-size: 13px;
+        font-weight: 800;
+        letter-spacing: 0.4px;
+    }
+
+    .status-pass {
+        color: #05603a;
+        background: #d1fadf;
+        border: 1px solid #75e0a7;
+    }
+
+    .status-fail {
+        color: #b42318;
+        background: #fee4e2;
+        border: 1px solid #fda29b;
+    }
+
+    .info-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin-bottom: 28px;
+    }
+
+    .info-card {
+        border: 1px solid #e4e7ec;
+        border-radius: 12px;
+        overflow: hidden;
+        background: #ffffff;
+    }
+
+    .info-card-title {
+        margin: 0;
+        padding: 12px 16px;
+        background: #f2f6fb;
+        border-bottom: 1px solid #e4e7ec;
+        color: #0f3b66;
+        font-size: 15px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+    }
+
+    .info-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .info-table th,
+    .info-table td {
+        padding: 11px 16px;
+        border-bottom: 1px solid #eef2f6;
+        font-size: 14px;
+        vertical-align: top;
+    }
+
+    .info-table tr:last-child th,
+    .info-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    .info-table th {
+        width: 42%;
+        color: #475467;
+        font-weight: 700;
+        background: #fbfcfe;
+    }
+
+    .info-table td {
+        color: #111827;
+        font-weight: 600;
+    }
+
+    .section-heading {
+        text-align: center;
+        margin: 30px 0 16px 0;
+        color: #0f3b66;
+        font-size: 18px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .marks-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 28px;
+        border: 1px solid #d0d5dd;
+    }
+
+    .marks-table th {
+        background: #0f3b66;
+        color: white;
+        padding: 12px 14px;
+        border: 1px solid #0f3b66;
+        font-size: 14px;
+        text-align: center;
+    }
+
+    .marks-table td {
+        padding: 12px 14px;
+        border: 1px solid #d0d5dd;
+        font-size: 14px;
+        color: #111827;
+        text-align: center;
+    }
+
+    .marks-table td:first-child {
+        text-align: left;
+        font-weight: 600;
+    }
+
+    .marks-table tbody tr:nth-child(even) {
+        background: #f9fafb;
+    }
+
+    .small-pass {
+        display: inline-block;
+        padding: 5px 11px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 800;
+        color: #05603a;
+        background: #d1fadf;
+    }
+
+    .small-fail {
+        display: inline-block;
+        padding: 5px 11px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 800;
+        color: #b42318;
+        background: #fee4e2;
+    }
+
+    .summary-panel {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        border: 1px solid #d0d5dd;
+        border-radius: 12px;
+        overflow: hidden;
+        margin-top: 8px;
+        background: #ffffff;
+    }
+
+    .summary-item {
+        padding: 18px 14px;
+        text-align: center;
+        border-right: 1px solid #d0d5dd;
+    }
+
+    .summary-item:last-child {
+        border-right: none;
+    }
+
+    .summary-label {
+        color: #667085;
+        font-size: 13px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.2px;
+        margin-bottom: 8px;
+    }
+
+    .summary-value {
+        color: #111827;
+        font-size: 22px;
+        font-weight: 800;
+    }
+
+    .summary-value.result-pass {
+        color: #067647;
+    }
+
+    .summary-value.result-fail {
+        color: #b42318;
+    }
+
+    .report-note {
+        margin-top: 24px;
+        padding: 14px 16px;
+        background: #f8fafc;
+        border-left: 4px solid #0f3b66;
+        color: #475467;
+        font-size: 13px;
+        line-height: 1.6;
+    }
+
+    .signature-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 30px;
+        margin-top: 54px;
+    }
+
+    .signature-box {
+        width: 230px;
+        text-align: center;
+        color: #475467;
+        font-size: 13px;
+    }
+
+    .signature-line {
+        border-top: 1px solid #111827;
+        margin-bottom: 8px;
+        height: 1px;
+    }
+
+    @media (max-width: 900px) {
+        .report-inner {
+            padding: 24px 20px;
+        }
+
+        .report-header {
+            flex-direction: column;
+        }
+
+        .report-title-box {
+            text-align: left;
+        }
+
+        .info-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .summary-panel {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .summary-item:nth-child(2) {
+            border-right: none;
+        }
+
+        .summary-item:nth-child(1),
+        .summary-item:nth-child(2) {
+            border-bottom: 1px solid #d0d5dd;
+        }
+    }
+</style>
+
+<div class="report-wrapper">
+
+    <div class="report-actions">
+
+        <a href="{% url 'core:print_report_card' result.id %}"
+           target="_blank"
+           class="report-action-btn btn-print-report">
+            🖨 Print Report Card
+        </a>
+
+        {% if request.user.groups.all.0.name == "Student" %}
+
+            <a href="{% url 'core:student_results' %}"
+               class="report-action-btn btn-back-report">
+                ← Back
+            </a>
+
+        {% elif request.user.groups.all.0.name == "Teacher" %}
+
+            <a href="{% url 'core:teacher_results' %}"
+               class="report-action-btn btn-back-report">
+                ← Back
+            </a>
+
+        {% else %}
+
+            <a href="{% url 'core:results' %}"
+               class="report-action-btn btn-back-report">
+                ← Back
+            </a>
+
+        {% endif %}
+
+    </div>
+
+    <div class="report-paper">
+
+        <div class="report-top-border"></div>
+
+        <div class="report-inner">
+
+            <div class="report-header">
+
+                <div>
+                    <h1 class="school-title">
+                        {{ result.tenant.school_name|default:"School ERP" }}
+                    </h1>
+
+                    <p class="report-subtitle">
+                        Cloud-Native Multi-Tenant ERP Academic Report
+                    </p>
+                </div>
+
+                <div class="report-title-box">
+                    <h2 class="report-title">
+                        Student Report Card
+                    </h2>
+
+                    <div class="report-generated">
+                        Generated: {{ result.updated_at|date:"d M Y" }}
+                    </div>
+
+                    {% if result.result_status == "PASS" %}
+
+                        <span class="status-pill status-pass">
+                            PASS
+                        </span>
+
+                    {% else %}
+
+                        <span class="status-pill status-fail">
+                            FAIL
+                        </span>
+
+                    {% endif %}
+                </div>
+
+            </div>
+
+            <div class="info-grid">
+
+                <div class="info-card">
+                    <h3 class="info-card-title">
+                        Student Information
+                    </h3>
+
+                    <table class="info-table">
+                        <tr>
+                            <th>Student ID</th>
+                            <td>{{ student.student_id }}</td>
+                        </tr>
+
+                        <tr>
+                            <th>Student Name</th>
+                            <td>{{ student.first_name }} {{ student.last_name }}</td>
+                        </tr>
+
+                        <tr>
+                            <th>Admission No.</th>
+                            <td>{{ student.admission_number|default:"-" }}</td>
+                        </tr>
+
+                        <tr>
+                            <th>Class</th>
+                            <td>{{ school_class.class_name }}</td>
+                        </tr>
+
+                        <tr>
+                            <th>Section</th>
+                            <td>{{ section.section_name }}</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="info-card">
+                    <h3 class="info-card-title">
+                        Academic Information
+                    </h3>
+
+                    <table class="info-table">
+                        <tr>
+                            <th>Academic Year</th>
+                            <td>{{ academic_year.year_name }}</td>
+                        </tr>
+
+                        <tr>
+                            <th>Academic Term</th>
+                            <td>{{ result.academic_term.term_name }}</td>
+                        </tr>
+
+                        <tr>
+                            <th>Overall Grade</th>
+                            <td>{{ result.grade }}</td>
+                        </tr>
+
+                        <tr>
+                            <th>Percentage</th>
+                            <td>{{ result.percentage }}%</td>
+                        </tr>
+
+                        <tr>
+                            <th>Result Status</th>
+                            <td>{{ result.result_status }}</td>
+                        </tr>
+                    </table>
+                </div>
+
+            </div>
+
+            <h3 class="section-heading">
+                Subject Wise Performance
+            </h3>
+
+            <table class="marks-table">
+                <thead>
+                    <tr>
+                        <th>Subject</th>
+                        <th>Marks Obtained</th>
+                        <th>Total Marks</th>
+                        <th>Percentage</th>
+                        <th>Result</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for mark in marks %}
+
+                        <tr>
+                            <td>
+                                {{ mark.examination.subject.subject_name }}
+                            </td>
+
+                            <td>
+                                {{ mark.marks_obtained }}
+                            </td>
+
+                            <td>
+                                {{ mark.examination.total_marks }}
+                            </td>
+
+                            <td>
+                                {% widthratio mark.marks_obtained mark.examination.total_marks 100 %}%
+                            </td>
+
+                            <td>
+                                {% if mark.marks_obtained >= mark.examination.passing_marks %}
+
+                                    <span class="small-pass">
+                                        PASS
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="small-fail">
+                                        FAIL
+                                    </span>
+
+                                {% endif %}
+                            </td>
+                        </tr>
+
+                    {% empty %}
+
+                        <tr>
+                            <td colspan="5" style="text-align:center;">
+                                No marks available.
+                            </td>
+                        </tr>
+
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <h3 class="section-heading">
+                Result Summary
+            </h3>
+
+            <div class="summary-panel">
+
+                <div class="summary-item">
+                    <div class="summary-label">
+                        Total Marks
+                    </div>
+
+                    <div class="summary-value">
+                        {{ result.total_marks }}
+                    </div>
+                </div>
+
+                <div class="summary-item">
+                    <div class="summary-label">
+                        Percentage
+                    </div>
+
+                    <div class="summary-value">
+                        {{ result.percentage }}%
+                    </div>
+                </div>
+
+                <div class="summary-item">
+                    <div class="summary-label">
+                        Grade
+                    </div>
+
+                    <div class="summary-value">
+                        {{ result.grade }}
+                    </div>
+                </div>
+
+                <div class="summary-item">
+                    <div class="summary-label">
+                        Overall Result
+                    </div>
+
+                    {% if result.result_status == "PASS" %}
+
+                        <div class="summary-value result-pass">
+                            PASS
+                        </div>
+
+                    {% else %}
+
+                        <div class="summary-value result-fail">
+                            FAIL
+                        </div>
+
+                    {% endif %}
+                </div>
+
+            </div>
+
+            <div class="report-note">
+                This report card is generated dynamically from the student marks and result records stored in the ERP system.
+                It represents the academic performance of the student for the selected academic term.
+            </div>
+
+            <div class="signature-row">
+
+                <div class="signature-box">
+                    <div class="signature-line"></div>
+                    Class Teacher
+                </div>
+
+                <div class="signature-box">
+                    <div class="signature-line"></div>
+                    School Admin
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

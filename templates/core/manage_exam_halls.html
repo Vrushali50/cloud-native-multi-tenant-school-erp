@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>
+
+{{ examination.exam_name }}
+
+</h1>
+
+<p>
+
+Class :
+
+<strong>
+
+{{ examination.school_class.class_name }}
+
+</strong>
+
+</p>
+
+<p>
+
+Subject :
+
+<strong>
+
+{{ examination.subject.subject_name }}
+
+</strong>
+
+</p>
+
+<br>
+
+<a href="{% url 'core:add_exam_hall' examination.id %}">
+
++ Allocate Hall
+
+</a>
+
+<br><br>
+
+<table border="1" cellpadding="10">
+
+<tr>
+
+<th>Section</th>
+
+<th>Hall</th>
+
+<th>Invigilator</th>
+
+<th>Actions</th>
+
+</tr>
+
+{% for allocation in allocations %}
+
+<tr>
+
+<td>
+
+{{ allocation.section.section_name }}
+
+</td>
+
+<td>
+
+{{ allocation.hall_name }}
+
+</td>
+
+<td>
+
+{{ allocation.invigilator.first_name }}
+
+{{ allocation.invigilator.last_name }}
+
+</td>
+
+<td>
+
+<a href="{% url 'core:edit_exam_hall' allocation.id %}">
+
+Edit
+
+</a>
+
+|
+
+<a href="{% url 'core:delete_exam_hall' allocation.id %}">
+
+Delete
+
+</a>
+
+</td>
+
+</tr>
+
+{% empty %}
+
+<tr>
+
+<td colspan="4">
+
+No Hall Allocations Found.
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+<br>
+
+<a href="{% url 'core:examinations' %}">
+
+← Back to Examinations
+
+</a>
+
+{% endblock %}

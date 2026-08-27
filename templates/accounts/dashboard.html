@@ -2,40 +2,1037 @@
 
 {% block content %}
 
-<h1>Dashboard</h1>
+<style>
+    .dashboard-page {
+        background: #f5f7fb;
+        min-height: 100vh;
+        padding: 5px;
+    }
 
-<p style="font-size:20px; margin-bottom:30px;">
-    Welcome back,
-    <strong>{{ request.user.username }}</strong> 👋
-    <p><strong>Role:</strong> {{ user_group }}</p>
-</p>
+    .dashboard-header {
+        background: linear-gradient(135deg, #0f3b66, #2d89ef);
+        color: white;
+        border-radius: 18px;
+        padding: 28px;
+        margin-bottom: 25px;
+        box-shadow: 0 10px 25px rgba(15, 59, 102, 0.22);
+    }
 
-<div class="cards">
+    .dashboard-header h1 {
+        margin: 0;
+        font-size: 32px;
+        font-weight: 800;
+    }
 
-    <div class="card students">
-        <div class="icon">👨‍🎓</div>
-        <h3>Students</h3>
-        <h1>{{ student_count }}</h1>
+    .dashboard-header p {
+        margin-top: 8px;
+        font-size: 15px;
+        opacity: 0.95;
+    }
+
+    .role-badge {
+        display: inline-block;
+        margin-top: 14px;
+        padding: 8px 14px;
+        background: rgba(255,255,255,0.18);
+        border: 1px solid rgba(255,255,255,0.25);
+        border-radius: 999px;
+        font-weight: 800;
+        font-size: 13px;
+    }
+
+    .section-title {
+        margin: 28px 0 16px 0;
+        color: #0f3b66;
+        font-size: 22px;
+        font-weight: 800;
+        border-left: 5px solid #0f3b66;
+        padding-left: 12px;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 18px;
+    }
+
+    .stat-card {
+        background: white;
+        border-radius: 16px;
+        padding: 22px;
+        border: 1px solid #e4e7ec;
+        box-shadow: 0 8px 22px rgba(15, 23, 42, 0.08);
+        position: relative;
+        overflow: hidden;
+        min-height: 142px;
+    }
+
+    .stat-card::after {
+        content: "";
+        position: absolute;
+        width: 105px;
+        height: 105px;
+        border-radius: 50%;
+        right: -35px;
+        top: -35px;
+        background: rgba(45, 137, 239, 0.08);
+    }
+
+    .stat-icon {
+        font-size: 30px;
+        margin-bottom: 10px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .stat-label {
+        color: #667085;
+        font-size: 14px;
+        font-weight: 700;
+        position: relative;
+        z-index: 1;
+    }
+
+    .stat-value {
+        margin-top: 8px;
+        color: #101828;
+        font-size: 34px;
+        font-weight: 800;
+        position: relative;
+        z-index: 1;
+    }
+
+    .stat-small {
+        margin-top: 8px;
+        color: #667085;
+        font-size: 13px;
+        position: relative;
+        z-index: 1;
+        line-height: 1.5;
+    }
+
+    .blue {
+        color: #0f3b66;
+    }
+
+    .green {
+        color: #067647;
+    }
+
+    .orange {
+        color: #b54708;
+    }
+
+    .red {
+        color: #b42318;
+    }
+
+    .quick-grid {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 14px;
+        margin-bottom: 24px;
+    }
+
+    .quick-link {
+        background: white;
+        border: 1px solid #e4e7ec;
+        border-radius: 14px;
+        padding: 16px;
+        text-align: center;
+        text-decoration: none;
+        color: #0f3b66;
+        font-weight: 800;
+        box-shadow: 0 8px 20px rgba(15, 23, 42, 0.07);
+        transition: 0.2s;
+    }
+
+    .quick-link:hover {
+        background: #0f3b66;
+        color: white;
+        transform: translateY(-3px);
+    }
+
+    .panel-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 22px;
+        margin-top: 24px;
+    }
+
+    .panel-card {
+        background: white;
+        border-radius: 16px;
+        border: 1px solid #e4e7ec;
+        box-shadow: 0 8px 22px rgba(15, 23, 42, 0.08);
+        overflow: hidden;
+    }
+
+    .panel-header {
+        background: #f2f6fb;
+        padding: 16px 20px;
+        border-bottom: 1px solid #e4e7ec;
+    }
+
+    .panel-header h3 {
+        margin: 0;
+        color: #0f3b66;
+        font-size: 18px;
+        font-weight: 800;
+    }
+
+    .panel-body {
+        padding: 0;
+    }
+
+    .mini-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .mini-table th {
+        background: #ffffff;
+        color: #667085;
+        text-align: left;
+        padding: 12px 14px;
+        font-size: 13px;
+        border-bottom: 1px solid #eef2f6;
+    }
+
+    .mini-table td {
+        padding: 12px 14px;
+        color: #101828;
+        font-size: 13px;
+        border-bottom: 1px solid #eef2f6;
+        vertical-align: top;
+    }
+
+    .empty-text {
+        padding: 22px;
+        color: #667085;
+        text-align: center;
+    }
+
+    .badge {
+        display: inline-block;
+        padding: 5px 9px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 800;
+    }
+
+    .badge-success {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    .badge-warning {
+        background: #fef3c7;
+        color: #92400e;
+    }
+
+    .badge-danger {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+    .badge-info {
+        background: #eef4ff;
+        color: #175cd3;
+    }
+
+    @media (max-width: 1150px) {
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .quick-grid {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .panel-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 650px) {
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .quick-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="dashboard-page">
+
+    <div class="dashboard-header">
+        <h1>Welcome, {{ request.user.username }}</h1>
+        {% if not is_product_owner %}
+        <h1>School Name: {{ request.user.tenant }}</h1>
+        {% endif %}
+        <p>
+            Cloud-Native Multi-Tenant School ERP dashboard with academic, finance,
+            library, examination, and reporting overview.
+        </p>
+
+        <span class="role-badge">
+            Logged in as: {{ role_name }}
+        </span>
     </div>
 
-    <div class="card teachers">
-        <div class="icon">👩‍🏫</div>
-        <h3>Teachers</h3>
-       <h1>{{ teacher_count }}</h1>
-    </div>
+    {% if messages %}
+        {% for message in messages %}
+            <div class="message {{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
 
-    <div class="card classes">
-        <div class="icon">🏫</div>
-        <h3>Classes</h3>
-        <h1>0</h1>
-    </div>
+    <h2 class="section-title">Quick Actions</h2>
 
-    <div class="card subjects">
-        <div class="icon">📚</div>
-        <h3>Subjects</h3>
-        <h1>0</h1>
+    <div class="quick-grid">
+
+        {% if is_product_owner %}
+
+            <a href="{% url 'accounts:dashboard' %}" class="quick-link">
+                🏢 Platform Dashboard
+            </a>
+
+        {% endif %}
+        {% if is_teacher %}
+
+            <a href="{% url 'core:teacher_marks' %}" class="quick-link">
+                📝 Marks Entry
+            </a>
+            <a href="{% url 'core:teacher_timetable' %}" class="quick-link">
+                🗓️ My Timetable
+            </a>
+            <a href="{% url 'core:teacher_results' %}" class="quick-link">
+                📊 Results
+            </a>
+
+            <a href="{% url 'core:student_attendance_records' %}" class="quick-link">
+                ✅ Student Attendance
+            </a>
+
+            <a href="{% url 'core:staff_attendance' %}" class="quick-link">
+                🕒 My Attendance
+            </a>
+
+            <a href="{% url 'core:teacher_invigilation' %}" class="quick-link">
+                🏫 Invigilation
+            </a>
+
+            <a href="{% url 'core:my_library_records' %}" class="quick-link">
+                📚 My Library
+            </a>
+
+            <a href="{% url 'core:announcements' %}" class="quick-link">
+                📢 Announcements
+            </a>
+
+        {% endif %}
+        {% if is_school_admin %}
+
+            <a href="{% url 'accounts:user_list' %}" class="quick-link">
+                👥 Users
+            </a>
+
+            <a href="{% url 'core:students' %}" class="quick-link">
+                👨‍🎓 Students
+            </a>
+
+            <a href="{% url 'core:teachers' %}" class="quick-link">
+                👩‍🏫 Teachers
+            </a>
+
+            <a href="{% url 'core:examinations' %}" class="quick-link">
+                📝 Exams
+            </a>
+
+            <a href="{% url 'core:reports_dashboard' %}" class="quick-link">
+                📈 Reports
+            </a>
+            <a href="{% url 'core:announcements' %}" class="quick-link">
+                📢 Announcements
+            </a>
+        {% endif %}
+
+        {% if is_accountant %}
+
+            <a href="{% url 'core:fee_structures' %}" class="quick-link">
+                💷 Fee Structures
+            </a>
+
+            <a href="{% url 'core:student_fees' %}" class="quick-link">
+                🧾 Student Fees
+            </a>
+
+            <a href="{% url 'core:bulk_assign_student_fee' %}" class="quick-link">
+                📌 Bulk Assign
+            </a>
+
+            <a href="{% url 'core:fee_payments' %}" class="quick-link">
+                💳 Payments
+            </a>
+
+            <a href="{% url 'core:fee_report' %}" class="quick-link">
+                📈 Fee Report
+            </a>
+            <a href="{% url 'core:announcements' %}" class="quick-link">
+                📢 Announcements
+            </a>
+        {% endif %}
+
+        {% if is_librarian %}
+
+            <a href="{% url 'core:book_categories' %}" class="quick-link">
+                🏷️ Categories
+            </a>
+
+            <a href="{% url 'core:books' %}" class="quick-link">
+                📚 Books
+            </a>
+
+            <a href="{% url 'core:issue_book' %}" class="quick-link">
+                📖 Issue Book
+            </a>
+
+            <a href="{% url 'core:library_issues' %}" class="quick-link">
+                📋 Issues
+            </a>
+
+            <a href="{% url 'core:library_report' %}" class="quick-link">
+                📈 Library Report
+            </a>
+            <a href="{% url 'core:announcements' %}" class="quick-link">
+                📢 Announcements
+            </a>
+        {% endif %}
+
+        {% if is_student %}
+
+            <a href="{% url 'core:student_results' %}" class="quick-link">
+                📊 My Results
+            </a>
+            <a href="{% url 'core:student_timetable' %}" class="quick-link">
+                🗓️ My Timetable
+            </a>
+            <a href="{% url 'core:my_fees' %}" class="quick-link">
+                💷 My Fees
+            </a>
+
+            <a href="{% url 'core:my_library_records' %}" class="quick-link">
+                📚 My Library
+            </a>
+            <a href="{% url 'core:announcements' %}" class="quick-link">
+                📢 Announcements
+            </a>
+        {% endif %}
+
+    </div>
+        {% if is_product_owner %}
+
+        <h2 class="section-title">Platform Overview</h2>
+
+        <div class="stats-grid">
+
+            <div class="stat-card">
+                <div class="stat-icon">🏫</div>
+                <div class="stat-label">Total Schools</div>
+                <div class="stat-value blue">{{ total_schools }}</div>
+                <div class="stat-small">Registered tenants on the ERP platform</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">✅</div>
+                <div class="stat-label">Active Schools</div>
+                <div class="stat-value green">{{ active_schools }}</div>
+                <div class="stat-small">Currently active tenant schools</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">⛔</div>
+                <div class="stat-label">Inactive Schools</div>
+                <div class="stat-value red">{{ inactive_schools }}</div>
+                <div class="stat-small">Disabled or inactive tenant schools</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">🔐</div>
+                <div class="stat-label">Data Privacy</div>
+                <div class="stat-value orange">Secure</div>
+                <div class="stat-small">Product Owner cannot access internal school records</div>
+            </div>
+
+        </div>
+
+    {% endif %}
+    {% if is_school_admin %}
+
+        <h2 class="section-title">Academic Overview</h2>
+
+        <div class="stats-grid">
+
+            {% if is_product_owner %}
+                <div class="stat-card">
+                    <div class="stat-icon">🏫</div>
+                    <div class="stat-label">Total Schools</div>
+                    <div class="stat-value blue">{{ total_schools }}</div>
+                    <div class="stat-small">Multi-tenant schools</div>
+                </div>
+            {% endif %}
+
+            <div class="stat-card">
+                <div class="stat-icon">👨‍🎓</div>
+                <div class="stat-label">Students</div>
+                <div class="stat-value blue">{{ total_students }}</div>
+                <div class="stat-small">Active: {{ active_students }}</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">👩‍🏫</div>
+                <div class="stat-label">Teachers</div>
+                <div class="stat-value green">{{ total_teachers }}</div>
+                <div class="stat-small">Active: {{ active_teachers }}</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">🏫</div>
+                <div class="stat-label">Classes</div>
+                <div class="stat-value orange">{{ total_classes }}</div>
+                <div class="stat-small">Academic classes</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">📚</div>
+                <div class="stat-label">Subjects</div>
+                <div class="stat-value red">{{ total_subjects }}</div>
+                <div class="stat-small">Academic subjects</div>
+            </div>
+
+        </div>
+
+    {% endif %}
+
+    {% if is_school_admin or is_accountant %}
+
+        <h2 class="section-title">Fee Overview</h2>
+
+        <div class="stats-grid">
+
+            <div class="stat-card">
+                <div class="stat-icon">💷</div>
+                <div class="stat-label">Assigned Fees</div>
+                <div class="stat-value blue">£{{ total_fee_assigned }}</div>
+                <div class="stat-small">Total assigned amount</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">✅</div>
+                <div class="stat-label">Collected</div>
+                <div class="stat-value green">£{{ total_fee_collected }}</div>
+                <div class="stat-small">{{ fee_collection_percent }}% collection rate</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">⚠️</div>
+                <div class="stat-label">Pending Balance</div>
+                <div class="stat-value red">£{{ total_fee_pending }}</div>
+                <div class="stat-small">Pending records: {{ pending_fee_count }}</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">💳</div>
+                <div class="stat-label">Payments</div>
+                <div class="stat-value orange">{{ total_payments }}</div>
+                <div class="stat-small">Paid: {{ paid_fee_count }} | Partial: {{ partial_fee_count }}</div>
+            </div>
+
+        </div>
+
+    {% endif %}
+
+    {% if is_school_admin or is_librarian %}
+
+        <h2 class="section-title">Library Overview</h2>
+
+        <div class="stats-grid">
+
+            <div class="stat-card">
+                <div class="stat-icon">📚</div>
+                <div class="stat-label">Book Titles</div>
+                <div class="stat-value blue">{{ total_books }}</div>
+                <div class="stat-small">Total library books</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">📦</div>
+                <div class="stat-label">Available Copies</div>
+                <div class="stat-value green">{{ available_book_copies }}</div>
+                <div class="stat-small">Out of {{ total_book_copies }} total copies</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">📖</div>
+                <div class="stat-label">Borrowed Books</div>
+                <div class="stat-value orange">{{ borrowed_books }}</div>
+                <div class="stat-small">Returned: {{ returned_books }}</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">💰</div>
+                <div class="stat-label">Library Fines</div>
+                <div class="stat-value red">£{{ total_library_fines }}</div>
+                <div class="stat-small">Total recorded fines</div>
+            </div>
+
+        </div>
+
+    {% endif %}
+
+    {% if is_school_admin %}
+
+        <h2 class="section-title">Examination & Results</h2>
+
+        <div class="stats-grid">
+
+            <div class="stat-card">
+                <div class="stat-icon">📝</div>
+                <div class="stat-label">Total Exams</div>
+                <div class="stat-value blue">{{ total_exams }}</div>
+                <div class="stat-small">Upcoming list shown below</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">📊</div>
+                <div class="stat-label">Published Results</div>
+                <div class="stat-value green">{{ published_results }}</div>
+                <div class="stat-small">Visible to students</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">✅</div>
+                <div class="stat-label">Pass Results</div>
+                <div class="stat-value green">{{ pass_results }}</div>
+                <div class="stat-small">Overall PASS status</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">❌</div>
+                <div class="stat-label">Fail Results</div>
+                <div class="stat-value red">{{ fail_results }}</div>
+                <div class="stat-small">Overall FAIL status</div>
+            </div>
+
+        </div>
+
+    {% endif %}
+
+    {% if is_teacher %}
+
+        <h2 class="section-title">Teacher Overview</h2>
+
+        <div class="stats-grid">
+
+            <div class="stat-card">
+                <div class="stat-icon">📌</div>
+                <div class="stat-label">Assignments</div>
+                <div class="stat-value blue">{{ teacher_assignment_count }}</div>
+                <div class="stat-small">Class / section assignments</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">📚</div>
+                <div class="stat-label">Subjects</div>
+                <div class="stat-value green">{{ teacher_subject_count }}</div>
+                <div class="stat-small">Assigned subjects</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">📝</div>
+                <div class="stat-label">Upcoming Exams</div>
+                <div class="stat-value orange">{{ teacher_upcoming_exams|length }}</div>
+                <div class="stat-small">Related to your subjects</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">📚</div>
+                <div class="stat-label">Library Records</div>
+                <div class="stat-value red">{{ teacher_library_records|length }}</div>
+                <div class="stat-small">Recent library activity</div>
+            </div>
+
+        </div>
+
+    {% endif %}
+
+    {% if is_student %}
+
+        <h2 class="section-title">Student Overview</h2>
+
+        <div class="stats-grid">
+
+            <div class="stat-card">
+                <div class="stat-icon">💷</div>
+                <div class="stat-label">Total Fees</div>
+                <div class="stat-value blue">£{{ student_fee_total }}</div>
+                <div class="stat-small">Paid: £{{ student_fee_paid }}</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">⚠️</div>
+                <div class="stat-label">Pending Fees</div>
+                <div class="stat-value red">£{{ student_fee_pending }}</div>
+                <div class="stat-small">Remaining balance</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">📚</div>
+                <div class="stat-label">Borrowed Books</div>
+                <div class="stat-value orange">{{ student_borrowed_books }}</div>
+                <div class="stat-small">Currently borrowed</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">📊</div>
+                <div class="stat-label">Published Results</div>
+                <div class="stat-value green">{{ student_results_count }}</div>
+                <div class="stat-small">Available result records</div>
+            </div>
+
+        </div>
+
+    {% endif %}
+
+    <div class="panel-grid">
+        {% if not is_product_owner %}
+
+            <div class="panel-card">
+                <div class="panel-header">
+                    <h3>Latest Announcements</h3>
+                </div>
+
+                <div class="panel-body">
+                    <table class="mini-table">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Priority</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {% for announcement in dashboard_announcements %}
+                                <tr>
+                                    <td>
+                                        <strong>{{ announcement.title }}</strong>
+                                        <br>
+                                        <small>{{ announcement.message|truncatechars:70 }}</small>
+                                    </td>
+
+                                    <td>
+                                        {% if announcement.priority == "Urgent" %}
+                                            <span class="badge badge-danger">Urgent</span>
+                                        {% elif announcement.priority == "High" %}
+                                            <span class="badge badge-warning">High</span>
+                                        {% elif announcement.priority == "Normal" %}
+                                            <span class="badge badge-success">Normal</span>
+                                        {% else %}
+                                            <span class="badge badge-info">Low</span>
+                                        {% endif %}
+                                    </td>
+
+                                    <td>
+                                        {{ announcement.start_date|date:"d M Y" }}
+                                    </td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="3" class="empty-text">
+                                        No active announcements.
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        {% endif %}
+        
+        {% if is_school_admin %}
+
+            <div class="panel-card">
+                <div class="panel-header">
+                    <h3>Upcoming Exams</h3>
+                </div>
+
+                <div class="panel-body">
+                    <table class="mini-table">
+                        <thead>
+                            <tr>
+                                <th>Subject</th>
+                                <th>Class</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {% for exam in upcoming_exams %}
+                                <tr>
+                                    <td>{{ exam.subject.subject_name }}</td>
+                                    <td>{{ exam.school_class.class_name }}</td>
+                                    <td>{{ exam.exam_date|date:"d M Y" }}</td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="3" class="empty-text">No upcoming exams.</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="panel-card">
+                <div class="panel-header">
+                    <h3>Latest Results</h3>
+                </div>
+
+                <div class="panel-body">
+                    <table class="mini-table">
+                        <thead>
+                            <tr>
+                                <th>Student</th>
+                                <th>Term</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {% for result in latest_results %}
+                                <tr>
+                                    <td>{{ result.student.first_name }} {{ result.student.last_name }}</td>
+                                    <td>{{ result.academic_term.term_name }}</td>
+                                    <td>
+                                        {% if result.result_status == "PASS" %}
+                                            <span class="badge badge-success">PASS</span>
+                                        {% else %}
+                                            <span class="badge badge-danger">FAIL</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="3" class="empty-text">No result records.</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        {% endif %}
+
+        {% if is_accountant or is_school_admin %}
+
+            <div class="panel-card">
+                <div class="panel-header">
+                    <h3>Recent Fee Records</h3>
+                </div>
+
+                <div class="panel-body">
+                    <table class="mini-table">
+                        <thead>
+                            <tr>
+                                <th>Student</th>
+                                <th>Fee</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {% for fee in recent_fee_records %}
+                                <tr>
+                                    <td>{{ fee.student.first_name }} {{ fee.student.last_name }}</td>
+                                    <td>{{ fee.fee_structure.fee_name }}</td>
+                                    <td>
+                                        {% if fee.status == "Paid" %}
+                                            <span class="badge badge-success">Paid</span>
+                                        {% elif fee.status == "Partially Paid" %}
+                                            <span class="badge badge-warning">Partial</span>
+                                        {% else %}
+                                            <span class="badge badge-danger">Pending</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="3" class="empty-text">No fee records.</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        {% endif %}
+
+        {% if is_librarian or is_school_admin %}
+
+            <div class="panel-card">
+                <div class="panel-header">
+                    <h3>Borrowed Books</h3>
+                </div>
+
+                <div class="panel-body">
+                    <table class="mini-table">
+                        <thead>
+                            <tr>
+                                <th>Book</th>
+                                <th>Member</th>
+                                <th>Due Date</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {% for issue in borrowed_records %}
+                                <tr>
+                                    <td>{{ issue.book.title }}</td>
+                                    <td>{{ issue.member_name }}</td>
+                                    <td>{{ issue.due_date|date:"d M Y" }}</td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="3" class="empty-text">No borrowed books.</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        {% endif %}
+
+        {% if is_teacher %}
+
+            <div class="panel-card">
+                <div class="panel-header">
+                    <h3>Upcoming Exams</h3>
+                </div>
+
+                <div class="panel-body">
+                    <table class="mini-table">
+                        <thead>
+                            <tr>
+                                <th>Subject</th>
+                                <th>Class</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {% for exam in teacher_upcoming_exams %}
+                                <tr>
+                                    <td>{{ exam.subject.subject_name }}</td>
+                                    <td>{{ exam.school_class.class_name }}</td>
+                                    <td>{{ exam.exam_date|date:"d M Y" }}</td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="3" class="empty-text">No upcoming exams.</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        {% endif %}
+
+        {% if is_student %}
+
+            <div class="panel-card">
+                <div class="panel-header">
+                    <h3>My Fees</h3>
+                </div>
+
+                <div class="panel-body">
+                    <table class="mini-table">
+                        <thead>
+                            <tr>
+                                <th>Fee</th>
+                                <th>Paid</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {% for fee in student_recent_fees %}
+                                <tr>
+                                    <td>{{ fee.fee_structure.fee_name }}</td>
+                                    <td>£{{ fee.paid_amount }}</td>
+                                    <td>
+                                        {% if fee.status == "Paid" %}
+                                            <span class="badge badge-success">Paid</span>
+                                        {% elif fee.status == "Partially Paid" %}
+                                            <span class="badge badge-warning">Partial</span>
+                                        {% else %}
+                                            <span class="badge badge-danger">Pending</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="3" class="empty-text">No fee records.</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="panel-card">
+                <div class="panel-header">
+                    <h3>My Upcoming Exams</h3>
+                </div>
+
+                <div class="panel-body">
+                    <table class="mini-table">
+                        <thead>
+                            <tr>
+                                <th>Subject</th>
+                                <th>Date</th>
+                                <th>Time</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {% for exam in student_upcoming_exams %}
+                                <tr>
+                                    <td>{{ exam.subject.subject_name }}</td>
+                                    <td>{{ exam.exam_date|date:"d M Y" }}</td>
+                                    <td>{{ exam.start_time }}</td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="3" class="empty-text">No upcoming exams.</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        {% endif %}
+
     </div>
 
 </div>
 
-{% endblock %}  
+{% endblock %}

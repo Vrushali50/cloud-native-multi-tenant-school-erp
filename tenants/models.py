@@ -40,7 +40,7 @@ class Tenant(models.Model):
         choices=Status.choices,
         default=Status.ACTIVE,
     )
-
+    is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

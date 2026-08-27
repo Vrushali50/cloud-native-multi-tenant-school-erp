@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div style="
+    max-width:800px;
+    background:white;
+    padding:30px;
+    border-radius:10px;
+">
+
+    <h1>Edit Teacher</h1>
+
+    <form method="post">
+
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+            {{ form.non_field_errors }}
+        {% endif %}
+
+        {% for field in form %}
+
+            <div style="margin-bottom:15px;">
+
+                <label style="display:block;font-weight:bold;">
+                    {{ field.label }}
+                </label>
+
+                {{ field }}
+
+                {% for error in field.errors %}
+                    <div style="color:red;">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+
+            </div>
+
+        {% endfor %}
+
+        <button type="submit">
+         Save Changes
+    </button>
+
+        <a href="{% url 'core:students' %}">
+            Cancel
+        </a>
+
+    </form>
+
+</div>
+
+{% endblock %}

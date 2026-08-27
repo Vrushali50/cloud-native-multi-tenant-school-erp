@@ -1,0 +1,188 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% if messages %}
+    {% for message in messages %}
+
+        <div style="
+            background:#d1e7dd;
+            color:#0f5132;
+            padding:12px;
+            border-radius:5px;
+            margin-bottom:20px;
+        ">
+            {{ message }}
+        </div>
+
+    {% endfor %}
+{% endif %}
+
+
+<div style="
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:20px;
+">
+
+    <div>
+
+        <h1>
+            Student Attendance
+        </h1>
+
+        <p>
+            View student attendance records.
+        </p>
+
+    </div>
+
+
+    {% if not request.user.groups.all.0.name == "Student" %}
+
+        <a
+            href="{% url 'core:record_student_attendance' %}"
+            style="
+                background:#5b73f2;
+                color:white;
+                text-decoration:none;
+                padding:12px 20px;
+                border-radius:5px;
+            "
+        >
+            + Record Attendance
+        </a>
+
+    {% endif %}
+
+</div>
+
+
+<table style="
+    width:100%;
+    border-collapse:collapse;
+    background:white;
+">
+
+    <tr style="
+        background:#5b73f2;
+        color:white;
+    ">
+
+        <th style="padding:15px;">
+            Date
+        </th>
+
+        <th style="padding:15px;">
+            Student
+        </th>
+
+        <th style="padding:15px;">
+            Subject
+        </th>
+
+        <th style="padding:15px;">
+            Class
+        </th>
+
+        <th style="padding:15px;">
+            Section
+        </th>
+
+        <th style="padding:15px;">
+            Status
+        </th>
+
+        <th style="padding:15px;">
+            Remarks
+        </th>
+
+    </tr>
+
+
+    {% for attendance in attendance_records %}
+
+        <tr>
+
+            <td style="padding:15px;">
+                {{ attendance.attendance_date }}
+            </td>
+
+            <td style="padding:15px;">
+                {{ attendance.student.first_name }}
+                {{ attendance.student.last_name }}
+            </td>
+
+            <td style="padding:15px;">
+                {{ attendance.teacher_subject.subject.subject_name }}
+            </td>
+
+            <td style="padding:15px;">
+                {{ attendance.teacher_subject.school_class.class_name }}
+            </td>
+
+            <td style="padding:15px;">
+                {{ attendance.teacher_subject.section.section_name }}
+            </td>
+
+            <td style="padding:15px;">
+
+                {% if attendance.status == "Present" %}
+
+                    <span style="
+                        color:green;
+                        font-weight:bold;
+                    ">
+                        Present
+                    </span>
+
+                {% elif attendance.status == "Absent" %}
+
+                    <span style="
+                        color:red;
+                        font-weight:bold;
+                    ">
+                        Absent
+                    </span>
+
+                {% else %}
+
+                    <span style="
+                        color:#d97706;
+                        font-weight:bold;
+                    ">
+                        Late
+                    </span>
+
+                {% endif %}
+
+            </td>
+
+            <td style="padding:15px;">
+                {{ attendance.remarks|default:"-" }}
+            </td>
+
+        </tr>
+
+    {% empty %}
+
+        <tr>
+
+            <td
+                colspan="7"
+                style="
+                    padding:20px;
+                    text-align:center;
+                "
+            >
+                No attendance records found.
+            </td>
+
+        </tr>
+
+    {% endfor %}
+
+</table>
+
+{% endblock %}
