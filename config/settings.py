@@ -35,6 +35,7 @@ ALLOWED_HOSTS = [
     "127.0.0.1",
     "localhost",
     "0.0.0.0",
+    "http://16.171.152.13:8000/"
 ]
 
 DATABASES = {
