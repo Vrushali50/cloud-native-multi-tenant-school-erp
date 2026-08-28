@@ -69,7 +69,8 @@ jobs:
         run: |
           cd /home/ec2-user/cloud-native-multi-tenant-school-erp
           git fetch origin main
-          git reset --hard origin/main
+          git checkout -B main FETCH_HEAD
+          git reset --hard FETCH_HEAD
           chmod +x docker-entrypoint.sh
           sed -i 's/\r$//' docker-entrypoint.sh
           docker compose -f docker-compose.prod.yml up --build -d
