@@ -38,7 +38,10 @@ ALLOWED_HOSTS = [
     "16.171.152.13",
     "ec2-16-171-152-13.eu-north-1.compute.amazonaws.com",
 ]
-
+CSRF_TRUSTED_ORIGINS = [
+    "http://16.171.152.13",
+    "http://ec2-16-171-152-13.eu-north-1.compute.amazonaws.com",
+]
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
@@ -143,7 +146,8 @@ STATICFILES_DIRS = [
 ]
 
 STATIC_ROOT = BASE_DIR / "staticfiles"
-
+MEDIA_URL = "media/"
+MEDIA_ROOT = BASE_DIR / "media"
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
