@@ -68,7 +68,8 @@ jobs:
       - name: Pull latest code and restart production containers
         run: |
           cd /home/ec2-user/cloud-native-multi-tenant-school-erp
-          git pull origin main
+          git fetch origin main
+          git reset --hard origin/main
           chmod +x docker-entrypoint.sh
           sed -i 's/\r$//' docker-entrypoint.sh
           docker compose -f docker-compose.prod.yml up --build -d
