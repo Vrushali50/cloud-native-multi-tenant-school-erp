@@ -58,20 +58,20 @@ jobs:
       - name: Collect static files
         run: python manage.py collectstatic --noinput
 
-    deploy:
-      name: Deploy to AWS EC2
-      runs-on: self-hosted
-      needs: ci
-      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+  deploy:
+    name: Deploy to AWS EC2
+    runs-on: self-hosted
+    needs: ci
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
 
-      steps:
-        - name: Checkout latest code
-          uses: actions/checkout@v4
+    steps:
+      - name: Checkout latest code
+        uses: actions/checkout@v4
 
-        - name: Restart production containers
-          run: |
-            chmod +x docker-entrypoint.sh
-            sed -i 's/\r$//' docker-entrypoint.sh
-            docker compose -p school_erp -f docker-compose.prod.yml up --build -d
-            docker image prune -f
-            docker ps
+      - name: Restart production containers
+        run: |
+          chmod +x docker-entrypoint.sh
+          sed -i 's/\r$//' docker-entrypoint.sh
+          docker compose -p school_erp -f docker-compose.prod.yml up --build -d
+          docker image prune -f
+          docker ps
