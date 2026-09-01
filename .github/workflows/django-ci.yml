@@ -58,21 +58,20 @@ jobs:
       - name: Collect static files
         run: python manage.py collectstatic --noinput
 
-  deploy:
+    deploy:
     name: Deploy to AWS EC2
     runs-on: self-hosted
     needs: ci
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
 
     steps:
-      - name: Pull latest code and restart production containers
+      - name: Checkout latest code
+        uses: actions/checkout@v4
+
+      - name: Restart production containers
         run: |
-          cd /home/ec2-user/cloud-native-multi-tenant-school-erp
-          git fetch origin main
-          git checkout -B main FETCH_HEAD
-          git reset --hard FETCH_HEAD
           chmod +x docker-entrypoint.sh
           sed -i 's/\r$//' docker-entrypoint.sh
-          docker compose -f docker-compose.prod.yml up --build -d
+          docker compose -p school_erp -f docker-compose.prod.yml up --build -d
           docker image prune -f
           docker ps
