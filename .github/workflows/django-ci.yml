@@ -72,6 +72,7 @@ jobs:
         run: |
           chmod +x docker-entrypoint.sh
           sed -i 's/\r$//' docker-entrypoint.sh
-          docker compose -p school_erp -f docker-compose.prod.yml up --build -d
+          docker rm -f school_erp_web school_erp_nginx school_erp_db || true
+          docker compose -f docker-compose.prod.yml up --build -d
           docker image prune -f
           docker ps
